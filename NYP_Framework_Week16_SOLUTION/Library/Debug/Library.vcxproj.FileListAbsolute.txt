@@ -1,0 +1,2 @@
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\Debug\Library.pdb
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\Library\Debug\Library.pdb

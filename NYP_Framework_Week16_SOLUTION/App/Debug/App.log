@@ -1,0 +1,62 @@
+﻿  Application.cpp
+  GameStateManager.cpp
+  IntroState.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\glfw\include\GLFW\glfw3.h(98): message : see previous definition of 'APIENTRY'
+  MenuState.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\glfw\include\GLFW\glfw3.h(98): message : see previous definition of 'APIENTRY'
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\GameStateManagement\MenuState.cpp(125,43): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\GameStateManagement\MenuState.cpp(124,73): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\GameStateManagement\MenuState.cpp(126,95): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\GameStateManagement\MenuState.cpp(126,55): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+  PlayGameState.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\glfw\include\GLFW\glfw3.h(98): message : see previous definition of 'APIENTRY'
+  main.cpp
+  BackgroundEntity.cpp
+  Enemy2D.cpp
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(458,22): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(488,22): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(582,66): warning C4244: '-=': conversion from 'float' to 'T', possible loss of data
+          with
+          [
+              T=glm::i32
+          ]
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(635,60): warning C4244: '-=': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=glm::i32
+          ]
+  GameManager.cpp
+  GUI_Scene2D.cpp
+  InventoryItem.cpp
+  InventoryManager.cpp
+  Map2D.cpp
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Map2D.cpp(649,32): warning C4018: '<': signed/unsigned mismatch
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Map2D.cpp(650,26): warning C4018: '<': signed/unsigned mismatch
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Map2D.cpp(711,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Map2D.cpp(720,20): warning C4018: '<': signed/unsigned mismatch
+  Physics2D.cpp
+  Player2D.cpp
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Player2D.cpp(522,22): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Player2D.cpp(552,22): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Player2D.cpp(646,66): warning C4244: '-=': conversion from 'float' to 'T', possible loss of data
+          with
+          [
+              T=glm::i32
+          ]
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Player2D.cpp(699,60): warning C4244: '-=': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=glm::i32
+          ]
+  Scene2D.cpp
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Scene2D.cpp(50,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Scene2D.cpp(178,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Scene2D.cpp(251,20): warning C4018: '<': signed/unsigned mismatch
+  SoundController.cpp
+  SoundInfo.cpp
+  Generating Code...
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  App.vcxproj -> C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\Debug\App.exe
