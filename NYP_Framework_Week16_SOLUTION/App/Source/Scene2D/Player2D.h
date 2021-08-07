@@ -37,6 +37,11 @@ class CMap2D;
 // Include InventoryManager
 #include "InventoryManager.h"
 
+// Include EntityManager
+#include "EntityManager.h"
+
+#include "ItemSpawner.h"
+
 // Include SoundController
 #include "..\SoundController\SoundController.h"
 
@@ -74,6 +79,7 @@ protected:
 	};
 
 	glm::i32vec2 i32vec2OldIndex;
+	glm::i32vec2 i32vec2OldMicroIndex;
 
 	// Handler to the CMap2D instance
 	CMap2D* cMap2D;
@@ -81,8 +87,16 @@ protected:
 	// Keyboard Controller singleton instance
 	CKeyboardController* cKeyboardController;
 
+	CEntityManager2D* cEntityManager2D;
+
 	// Physics
 	CPhysics2D cPhysics2D;
+
+	double bombThrowCD;
+	double nextSwitchCD;
+	double autoSpawnBombCD;
+
+	float jumpBoostCD;
 
 	//CS: Animated Sprite
 	CSpriteAnimation* animatedSprites;
@@ -90,10 +104,18 @@ protected:
 	// Current color
 	glm::vec4 currentColor;
 
+	int dJumpCount;
+
+	float jumpCD;
+
+	void SwitchToMap(CPhysics2D::GRAVITY_DIRECTION);
+
 	// InventoryManager
 	CInventoryManager* cInventoryManager;
 	// InventoryItem
 	CInventoryItem* cInventoryItem;
+
+	CItemSpawner2D* cItemSpawner;
 
 	// Count the number of jumps
 	int jumpCount;
