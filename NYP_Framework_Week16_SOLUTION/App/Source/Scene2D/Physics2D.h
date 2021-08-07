@@ -11,6 +11,7 @@
 
 class CPhysics2D
 {
+	float GRAVITY_MAGNITUDE = 1.1;
 public:
 	enum STATUS
 	{
@@ -18,6 +19,22 @@ public:
 		JUMP,
 		FALL,
 		NUM_STATUS
+	};
+	enum GRAVITY_DIRECTION
+	{
+		GRAVITY_DOWN,
+		GRAVITY_UP,
+		GRAVITY_RIGHT,
+		GRAVITY_LEFT,
+		GRAVITY_COUNT
+	};
+	enum DIRECTION
+	{
+		UP = 0,
+		DOWN = 1,
+		LEFT = 2,
+		RIGHT = 3,
+		NUM_DIRECTIONS
 	};
 
 	// Constructor
@@ -36,15 +53,25 @@ public:
 	void SetDisplacement(const glm::vec2 v2Displacement);		// Set Displacement
 	void SetTime(const float fTime);							// Set Time
 	void SetStatus(const STATUS sStatus);						// Set Status
+	void SetGravityDirection(const GRAVITY_DIRECTION sGravDir);	// Set Gravity Direction
 
 	// Get methods
-	glm::vec2 GetInitialVelocity(void) const;	// Get Initial velocity
-	glm::vec2 GetFinalVelocity(void) const;		// Get Final velocity
-	glm::vec2 GetAcceleration(void) const;		// Get Acceleration
-	glm::vec2 GetDisplacement(void) const;		// Get Displacement
-	glm::vec2 GetDeltaDisplacement(void) const;	// Get Delta Displacement
-	float GetTime(void) const;					// Get Time
-	STATUS GetStatus(void) const;				// Get Status
+	glm::vec2 GetInitialVelocity(void) const;			// Get Initial velocity
+	glm::vec2 GetFinalVelocity(void) const;				// Get Final velocity
+	glm::vec2 GetAcceleration(void) const;				// Get Acceleration
+	glm::vec2 GetDisplacement(void) const;				// Get Displacement
+	float GetTime(void) const;							// Get Time
+	STATUS GetStatus(void) const;						// Get Status
+	glm::vec2 GetDeltaDisplacement(void) const;			// Get Delta Displacement
+	GRAVITY_DIRECTION GetGravityDirection(void) const;	// Get Gravity Direction
+	void setGravityMagnitude(float mag);
+	bool ReachedPeakOfJump(void) const;					// Checks if Peak of Jump has been found relative to Gravity Direction
+
+	glm::vec2 GetGravityDirVector(void) const;			// Get Gravity Direction's Vector
+	glm::vec2 GetGravityVector(void) const;				// Get Gravity Vector after Multiplying Dir Vec * Gravity Magnitude
+
+	glm::vec2 GetRelativeDirVector(DIRECTION);			// Get Relative Direction Vector based on Gravity Direction
+
 
 	// Update
 	void Update(void);
@@ -67,7 +94,8 @@ protected:
 	glm::vec2 v2PrevDisplacement;	// Previous Displacement
 	float fTime;					// Time
 
-	const glm::vec2 v2Gravity = glm::vec2( 0.0f, -10.0f);		// Gravity constant
+	const glm::vec2 v2Gravity = glm::vec2( 0.0f, -1.1f);		// Gravity constant
+	GRAVITY_DIRECTION sCurrentGravityDirection;
 
 	STATUS sCurrentStatus;
 };

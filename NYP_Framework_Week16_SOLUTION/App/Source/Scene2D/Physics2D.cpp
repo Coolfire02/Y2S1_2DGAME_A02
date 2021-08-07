@@ -19,6 +19,7 @@ CPhysics2D::CPhysics2D(void)
 	, v2PrevDisplacement(glm::vec2(0.0f))
 	, fTime(0.0f)
 	, sCurrentStatus(STATUS::IDLE)
+	, sCurrentGravityDirection(GRAVITY_DIRECTION::GRAVITY_DOWN)
 {
 }
 
@@ -42,6 +43,11 @@ bool CPhysics2D::Init(void)
 	v2PrevDisplacement = glm::vec2(0.0f);
 	fTime = 0.0f;
 	return true;
+}
+
+void CPhysics2D::setGravityMagnitude(float grav)
+{
+	GRAVITY_MAGNITUDE = grav;
 }
 
 // Set methods
@@ -87,6 +93,98 @@ void CPhysics2D::SetStatus(const STATUS sStatus)
 		// Store the new status
 		sCurrentStatus = sStatus;
 	}
+}
+
+glm::vec2 CPhysics2D::GetGravityDirVector(void) const
+{
+	glm::vec2 vec = glm::vec2(0, -1.f);
+	switch (sCurrentGravityDirection)
+	{
+	case GRAVITY_UP:
+		vec.y = 1.f;
+		break;
+	case GRAVITY_LEFT:
+		vec.y = 0.f;
+		vec.x = -1.f;
+		break;
+	case GRAVITY_RIGHT:
+		vec.y = 0.f;
+		vec.x = 1.f;
+		break;
+	}
+	return vec;
+}
+
+glm::vec2 CPhysics2D::GetGravityVector(void) const
+{
+	glm::vec2 vec = GetGravityDirVector();
+	vec *= GRAVITY_MAGNITUDE;
+	return vec;
+}
+
+CPhysics2D::GRAVITY_DIRECTION CPhysics2D::GetGravityDirection() const
+{
+	return sCurrentGravityDirection;
+}
+
+void CPhysics2D::SetGravityDirection(CPhysics2D::GRAVITY_DIRECTION dir)
+{
+	sCurrentGravityDirection = dir;
+}
+
+bool CPhysics2D::ReachedPeakOfJump(void) const
+{
+	switch (sCurrentGravityDirection)
+	{
+	case GRAVITY_DOWN:
+		if (v2InitialVelocity.y <= 0.0f)
+			return true;
+		break;
+
+	case GRAVITY_UP:
+		if (v2InitialVelocity.y >= 0.0f)
+			return true;
+		break;
+
+	case GRAVITY_LEFT:
+		if (v2InitialVelocity.x <= 0.0f)
+			return true;
+		break;
+
+	case GRAVITY_RIGHT:
+		if (v2InitialVelocity.x >= 0.0f)
+			return true;
+		break;
+
+	}
+	return false;
+}
+
+glm::vec2 CPhysics2D::GetRelativeDirVector(DIRECTION relativeDir)
+{
+	glm::vec2 gravityDir = GetGravityDirVector();
+
+	glm::vec3 fwdVector = glm::vec3(gravityDir.x, gravityDir.y, 0);
+	fwdVector.x *= -1; fwdVector.y *= -1;
+	glm::vec3 rightVector = glm::cross(fwdVector, glm::vec3(0, 0, 1));
+
+	//Set to UP Direction by default
+	glm::vec2 moveDirectionInWorld = glm::vec2(fwdVector.x, fwdVector.y);
+
+	switch (relativeDir)
+	{
+	case LEFT:
+		moveDirectionInWorld.x = -rightVector.x;
+		moveDirectionInWorld.y = -rightVector.y;
+		break;
+	case RIGHT:
+		moveDirectionInWorld.x = rightVector.x;
+		moveDirectionInWorld.y = rightVector.y;
+		break;
+	case DOWN:
+		moveDirectionInWorld.y = -fwdVector.y;
+	}
+	return moveDirectionInWorld;
 }
 
 // Get methods
@@ -140,14 +238,12 @@ void CPhysics2D::Update(void)
 	if (sCurrentStatus == IDLE)
 		return;
 
-	// Store the previous displacement values
-	v2PrevDisplacement = v2Displacement;
 	// Calculate the final velocity
-	//v2FinalVelocity = v2InitialVelocity + v2Gravity * fTime;
+	v2FinalVelocity = v2InitialVelocity + GetGravityVector() * fTime;
 	// Calculate the displacement
-	v2Displacement = v2InitialVelocity * fTime + 0.5f * v2Gravity * fTime * fTime;
+	v2Displacement = v2FinalVelocity * fTime - 0.5f * GetGravityVector() * fTime * fTime;
 	// Update v2InitialVelocity
-	//v2InitialVelocity = v2FinalVelocity;
+	v2InitialVelocity = v2FinalVelocity;
 }
 
 // Add elapsed time
