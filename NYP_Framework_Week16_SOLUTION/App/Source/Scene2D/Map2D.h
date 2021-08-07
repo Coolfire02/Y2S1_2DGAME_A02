@@ -75,6 +75,41 @@ class CMap2D : public CSingletonTemplate<CMap2D>, public CEntity2D
 {
 	friend CSingletonTemplate<CMap2D>;
 public:
+
+
+	enum TILE_ID {
+		//Entities (1-9)
+		PLAYER = 3,
+		ENEMY = 4,
+
+		ENTITIES_END = 9,
+
+		INTERACTABLES_START = 49,
+		//Interactables (50-69)
+		BOMB_SMALL = 50,
+		BOMB_MEDIUM = 51,
+
+		POWERUP_DOUBLEJUMP = 55,
+
+		//Interactable Blocks (70-99)
+		ACID_DOWN = 70,
+		ACID_UP = 71,
+		ACID_RIGHT = 72,
+		ACID_LEFT = 73,
+
+		INTERACTABLES_END = 99,
+
+		//Blocks (100-199)
+		COLOUR_BLOCK_UP = 100,
+		COLOUR_BLOCK_DOWN,
+		COLOUR_BLOCK_RIGHT,
+		COLOUR_BLOCK_LEFT,
+
+		BLOCK_END = 104,
+
+		TILE_COUNT
+	};
+
 	// Init
 	bool Init(	const unsigned int uiNumLevels = 1,
 				const unsigned int uiNumRows = 24,
@@ -111,6 +146,12 @@ public:
 	// Find the indices of a certain value in arrMapInfo
 	bool FindValue(const int iValue, unsigned int& uirRow, unsigned int& uirCol, const bool bInvert = true);
 
+
+	void ClearInteractables();
+
+	// Set Color of tile
+	void SetColorOfTile(TILE_ID id, glm::vec4 color);
+
 	// Set current level
 	void SetCurrentLevel(unsigned int uiCurLevel);
 	// Get current level
@@ -138,6 +179,8 @@ protected:
 	unsigned int uiCurLevel;
 	// The number of levels
 	unsigned int uiNumLevels;
+
+	glm::vec4 blockColor[TILE_COUNT];
 
 	// A 1-D array which stores the map sizes for each level
 	MapSize* arrMapSizes;

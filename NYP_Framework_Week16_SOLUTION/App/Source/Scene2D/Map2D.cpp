@@ -16,6 +16,7 @@
 
 #include <iostream>
 #include <vector>
+#include <functional>
 using namespace std;
 
 // For AStar PathFinding
@@ -98,15 +99,55 @@ bool CMap2D::Init(	const unsigned int uiNumLevels,
 
 	// Load and create textures
 	// Load the ground texture
-	if (LoadTexture("Image/Scene2D_GroundTile.tga", 100) == false)
+	if (LoadTexture("Image/Scene2D_GroundTile.png", COLOUR_BLOCK_UP) == false)
 	{
 		std::cout << "Failed to load ground tile texture" << std::endl;
 		return false;
 	}
-	// Load the tree texture
-	if (LoadTexture("Image/Scene2D_TreeTile.tga", 2) == false)
+	if (LoadTexture("Image/Scene2D_GroundTile_DOWN.png", COLOUR_BLOCK_DOWN) == false)
 	{
-		std::cout << "Failed to load tree tile texture" << std::endl;
+		std::cout << "Failed to load ground tile down texture" << std::endl;
+		return false;
+	}
+	if (LoadTexture("Image/Scene2D_GroundTile_LEFT.png", COLOUR_BLOCK_RIGHT) == false)
+	{
+		std::cout << "Failed to load ground tile left texture" << std::endl;
+		return false;
+	}
+	if (LoadTexture("Image/Scene2D_GroundTile_RIGHT.png", COLOUR_BLOCK_LEFT) == false)
+	{
+		std::cout << "Failed to load ground tile right texture" << std::endl;
+		return false;
+	}
+	if (LoadTexture("Image/scene2d_bomb.tga", BOMB_SMALL) == false)
+	{
+		std::cout << "Failed to load bomb texture" << std::endl;
+		return false;
+	}
+	if (LoadTexture("Image/scene2d_jumpboost.png", POWERUP_DOUBLEJUMP) == false)
+	{
+		std::cout << "Failed to load bomb texture" << std::endl;
+		return false;
+	}
+
+	if (LoadTexture("Image/PoisonTop.png", ACID_UP) == false)
+	{
+		std::cout << "Failed to load Acid Texture" << std::endl;
+		return false;
+	}
+	if (LoadTexture("Image/PoisonBottom.png", ACID_DOWN) == false)
+	{
+		std::cout << "Failed to load Acid Texture" << std::endl;
+		return false;
+	}
+	if (LoadTexture("Image/PoisonLeft.png", ACID_LEFT) == false)
+	{
+		std::cout << "Failed to load Acid Texture" << std::endl;
+		return false;
+	}
+	if (LoadTexture("Image/PoisonRight.png", ACID_RIGHT) == false)
+	{
+		std::cout << "Failed to load Acid Texture" << std::endl;
 		return false;
 	}
 	// Load the Life texture
@@ -152,6 +193,21 @@ bool CMap2D::Init(	const unsigned int uiNumLevels,
 	//ClearAStar();
 
 	return true;
+}
+
+void CMap2D::ClearInteractables()
+{
+	for (unsigned int uiRow = 0; uiRow < cSettings->NUM_TILES_YAXIS; uiRow++)
+	{
+		for (unsigned int uiCol = 0; uiCol < cSettings->NUM_TILES_XAXIS; uiCol++)
+		{
+			int id = arrMapInfo[uiCurLevel][uiRow][uiCol].value;
+			if (id > CMap2D::TILE_ID::INTERACTABLES_START && id <= CMap2D::TILE_ID::POWERUP_DOUBLEJUMP)
+			{
+				arrMapInfo[uiCurLevel][uiRow][uiCol].value = 0;
+			}
+		}
+	}
 }
 
 /**
@@ -297,8 +353,19 @@ void CMap2D::SetMapInfo(const unsigned int uiRow, const unsigned int uiCol, cons
  */
 int CMap2D::GetMapInfo(const unsigned int uiRow, const int unsigned uiCol, const bool bInvert) const
 {
+	if (uiCol >= cSettings->NUM_TILES_XAXIS)
+		return 0;
+	else if (uiCol < 0)
+		return 0;
+	else if (uiRow < 0)
+		return 0;
+	else if (uiRow >= cSettings->NUM_TILES_YAXIS)
+		return 0;
 	if (bInvert)
+	{
 		return arrMapInfo[uiCurLevel][cSettings->NUM_TILES_YAXIS - uiRow - 1][uiCol].value;
+	}
+
 	else
 		return arrMapInfo[uiCurLevel][uiRow][uiCol].value;
 }
@@ -401,6 +468,11 @@ unsigned int CMap2D::GetCurrentLevel(void) const
 	return uiCurLevel;
 }
 
+void CMap2D::SetColorOfTile(TILE_ID id, glm::vec4 tileColor)
+{
+	blockColor[id] = tileColor;
+}
+
 
 /**
  @brief Load a texture, assign it a code and store it in MapOfTextureIDs.
@@ -456,9 +528,11 @@ bool CMap2D::LoadTexture(const char* filename, const int iTextureCode)
  */
 void CMap2D::RenderTile(const unsigned int uiRow, const unsigned int uiCol)
 {
-	if (arrMapInfo[uiCurLevel][uiRow][uiCol].value != 0)
+	if (arrMapInfo[uiCurLevel][uiRow][uiCol].value > ENTITIES_END)
 	{
 		//if (arrMapInfo[uiCurLevel][uiRow][uiCol].value < 3)
+		unsigned int colorLoc = glGetUniformLocation(CShaderManager::GetInstance()->activeShader->ID, "runtime_color");
+		glUniform4fv(colorLoc, 1, glm::value_ptr(blockColor[arrMapInfo[uiCurLevel][uiRow][uiCol].value]));
 		glBindTexture(GL_TEXTURE_2D, MapOfTextureIDs.at(arrMapInfo[uiCurLevel][uiRow][uiCol].value));
 
 		glBindVertexArray(VAO);
