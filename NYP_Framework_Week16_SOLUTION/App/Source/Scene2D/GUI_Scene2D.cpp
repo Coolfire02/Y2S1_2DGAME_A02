@@ -89,6 +89,15 @@ bool CGUI_Scene2D::Init(void)
 	cInventoryItem = cInventoryManager->Add("Tree", "Image/Scene2D_TreeTile.tga", 5, 0);
 	cInventoryItem->vec2Size = glm::vec2(25, 25);
 
+	cInventoryItem = cInventoryManager->Add("Bomb", "Image/scene2d_bomb.tga", 5, 0);
+	cInventoryItem->vec2Size = glm::vec2(25, 25);
+
+	cInventoryItem = cInventoryManager->Add("EnemyHealth", "Image/scene2d_golemenemy_icon.png", 100, 100);
+	cInventoryItem->vec2Size = glm::vec2(25, 25);
+
+	cInventoryItem = cInventoryManager->Add("DoubleJump", "Image/scene2d_jumpboost.png", 100, 0);
+	cInventoryItem->vec2Size = glm::vec2(25, 25);
+
 	return true;
 }
 
@@ -97,10 +106,6 @@ bool CGUI_Scene2D::Init(void)
  */
 void CGUI_Scene2D::Update(const double dElapsedTime)
 {
-	// Calculate the relative scale to our default windows width
-	const float relativeScale_x = cSettings->iWindowWidth / 800.0f;
-	const float relativeScale_y = cSettings->iWindowHeight / 600.0f;
-
 	// Start the Dear ImGui frame
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -110,7 +115,7 @@ void CGUI_Scene2D::Update(const double dElapsedTime)
 	ImGui::Begin("Invisible window", NULL, window_flags);
 	ImGui::SetWindowPos(ImVec2(0.0f, 0.0f));
 	ImGui::SetWindowSize(ImVec2((float)cSettings->iWindowWidth, (float)cSettings->iWindowHeight));
-	ImGui::SetWindowFontScale(1.5f * relativeScale_y);
+	ImGui::SetWindowFontScale(1.5f);
 
 	// Display the FPS
 	ImGui::TextColored(ImVec4(1, 1, 0, 1), "FPS: %d", cFPSCounter->GetFrameRate());
@@ -136,46 +141,60 @@ void CGUI_Scene2D::Update(const double dElapsedTime)
 		ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoScrollbar;
 	ImGui::Begin("Health", NULL, healthWindowFlags);
-	ImGui::SetWindowPos(ImVec2(cSettings->iWindowWidth * 0.03f, cSettings->iWindowHeight * 0.03f));
-	ImGui::SetWindowSize(ImVec2(100.0f * relativeScale_x, 25.0f * relativeScale_y));
-	ImGui::SetWindowFontScale(1.5f * relativeScale_y);
+	ImGui::SetWindowPos(ImVec2(25.0f, 25.0f));
+	ImGui::SetWindowSize(ImVec2(100.0f, 25.0f));
 	cInventoryItem = cInventoryManager->GetItem("Health");
 	ImGui::Image((void*)(intptr_t)cInventoryItem->GetTextureID(),
-		ImVec2(cInventoryItem->vec2Size.x * relativeScale_x, cInventoryItem->vec2Size.y * relativeScale_y),
+		ImVec2(cInventoryItem->vec2Size.x, cInventoryItem->vec2Size.y),
 		ImVec2(0, 1), ImVec2(1, 0));
 	ImGui::SameLine();
-	ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
+			ImGui::ProgressBar(cInventoryItem->GetCount() / 
+				(float)cInventoryItem->GetMaxCount(), ImVec2(100.0f, 20.0f));
+		ImGui::PopStyleColor();
+	ImGui::PopStyleColor();
+	ImGui::End();
+
+	ImGui::Begin("EnemyHealth", NULL, healthWindowFlags);
+	ImGui::SetWindowPos(ImVec2(25.0f, 50.0f));
+	ImGui::SetWindowSize(ImVec2(100.0f, 25.0f));
+	cInventoryItem = cInventoryManager->GetItem("EnemyHealth");
+	ImGui::Image((void*)(intptr_t)cInventoryItem->GetTextureID(),
+		ImVec2(cInventoryItem->vec2Size.x, cInventoryItem->vec2Size.y),
+		ImVec2(0, 1), ImVec2(1, 0));
+	ImGui::SameLine();
+	ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
 	ImGui::ProgressBar(cInventoryItem->GetCount() /
-		(float)cInventoryItem->GetMaxCount(), ImVec2(100.0f * relativeScale_x, 20.0f * relativeScale_y));
+		(float)cInventoryItem->GetMaxCount(), ImVec2(100.0f, 20.0f));
 	ImGui::PopStyleColor();
 	ImGui::PopStyleColor();
 	ImGui::End();
 
-	// Render the Lives
-	ImGuiWindowFlags livesWindowFlags = ImGuiWindowFlags_AlwaysAutoResize |
-		ImGuiWindowFlags_NoBackground |
-		ImGuiWindowFlags_NoTitleBar |
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoScrollbar;
-	ImGui::Begin("Lives", NULL, livesWindowFlags);
-	ImGui::SetWindowPos(ImVec2(cSettings->iWindowWidth * 0.85f, cSettings->iWindowHeight * 0.03f));
-	ImGui::SetWindowSize(ImVec2(100.0f * relativeScale_x, 25.0f * relativeScale_y));
-	cInventoryItem = cInventoryManager->GetItem("Lives");
-	ImGui::Image((void*)(intptr_t)cInventoryItem->GetTextureID(),
-		ImVec2(cInventoryItem->vec2Size.x * relativeScale_x, cInventoryItem->vec2Size.y * relativeScale_y),
-		ImVec2(0, 1), ImVec2(1, 0));
-	ImGui::SameLine();
-	ImGui::SetWindowFontScale(1.5f * relativeScale_y);
-	ImGui::TextColored(ImVec4(1, 1, 0, 1), "%d / %d",
-		cInventoryItem->GetCount(), cInventoryItem->GetMaxCount());
-	ImGui::End();
+	cInventoryItem = cInventoryManager->GetItem("DoubleJump");
+	if (cInventoryItem->GetCount() > 0)
+	{
+		ImGui::Begin("DoubleJump", NULL, healthWindowFlags);
+		ImGui::SetWindowPos(ImVec2(550.0f, 50.0f));
+		ImGui::SetWindowSize(ImVec2(100.0f, 25.0f));
+		ImGui::Image((void*)(intptr_t)cInventoryItem->GetTextureID(),
+			ImVec2(cInventoryItem->vec2Size.x, cInventoryItem->vec2Size.y),
+			ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::SameLine();
+		ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
+		ImGui::ProgressBar(cInventoryItem->GetCount() /
+			(float)cInventoryItem->GetMaxCount(), ImVec2(100.0f, 20.0f));
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::End();
+	}
+
 
 	// Render the inventory items
-	cInventoryItem = cInventoryManager->GetItem("Tree");
-	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));  // Set a background color
+	cInventoryItem = cInventoryManager->GetItem("Bomb");
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.7f, 0.5f, 1.0f));  // Set a background color
 	ImGuiWindowFlags inventoryWindowFlags = ImGuiWindowFlags_AlwaysAutoResize |
 		ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoMove |
@@ -183,17 +202,19 @@ void CGUI_Scene2D::Update(const double dElapsedTime)
 		ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoScrollbar;
 	ImGui::Begin("Image", NULL, inventoryWindowFlags);
-	ImGui::SetWindowPos(ImVec2(cSettings->iWindowWidth * 0.03f, cSettings->iWindowHeight * 0.9f));
-	ImGui::SetWindowSize(ImVec2(200.0f * relativeScale_x, 25.0f * relativeScale_y));
+	ImGui::SetWindowPos(ImVec2(550.0f, 550.0f));
+	ImGui::SetWindowSize(ImVec2(200.0f, 25.0f));
 	ImGui::Image((void*)(intptr_t)cInventoryItem->GetTextureID(),
-		ImVec2(cInventoryItem->vec2Size.x * relativeScale_x, cInventoryItem->vec2Size.y * relativeScale_y),
+		ImVec2(cInventoryItem->vec2Size.x, cInventoryItem->vec2Size.y),
 		ImVec2(0, 1), ImVec2(1, 0));
 	ImGui::SameLine();
-	ImGui::SetWindowFontScale(1.5f * relativeScale_y);
-	ImGui::TextColored(ImVec4(1, 1, 0, 1), "Tree: %d / %d",
+	ImGui::SetWindowFontScale(1.5f);
+	ImGui::TextColored(ImVec4(1, 1, 0, 1), "Bombs: %d / %d",
 		cInventoryItem->GetCount(), cInventoryItem->GetMaxCount());
 	ImGui::End();
 	ImGui::PopStyleColor();
+
+
 
 	//// IMGUI window demo
 	//inventoryWindowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar;
@@ -215,7 +236,6 @@ void CGUI_Scene2D::Update(const double dElapsedTime)
 
 	ImGui::End();
 }
-
 
 /**
  @brief Set up the OpenGL display environment before rendering
