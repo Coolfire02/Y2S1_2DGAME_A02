@@ -28,6 +28,8 @@
 #include "Player2D.h"
 // Include CEnemy2D
 #include "Enemy2D.h"
+// Include CItemSpawner2D
+#include "ItemSpawner.h"
 
 // Include vector
 #include <vector>
@@ -42,6 +44,9 @@
 
 // Game Manager
 #include "GameManager.h"
+
+// Entity Manager
+#include "EntityManager.h"
 
 // Include SoundController
 #include "..\SoundController\SoundController.h"
@@ -70,6 +75,16 @@ protected:
 	CMap2D* cMap2D;
 	// The handler containing the instance of CPlayer2Ds
 	CPlayer2D* cPlayer2D;
+
+	// The handler containing the single instance of cEnemy2D
+	CEnemy2D* cEnemy2D;
+
+	// The handler containing the single instance of ItemSpawner2D;
+	CItemSpawner2D* cItemSpawner2D;
+
+	// The handler containing the single instance of EntityManager2D;
+	CEntityManager2D* cEntityManager2D;
+
 	// A vector containing the instance of CEnemy2Ds
 	vector<CEntity2D*> enemyVector;
 

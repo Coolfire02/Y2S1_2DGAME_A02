@@ -14,6 +14,7 @@ CScene2D::CScene2D(void)
 	: cMap2D(NULL)
 	, cPlayer2D(NULL)
 	, cKeyboardController(NULL)
+	, cItemSpawner2D(NULL)
 	, cGUI_Scene2D(NULL)
 	, cGameManager(NULL)
 	, cSoundController(NULL)
@@ -27,8 +28,7 @@ CScene2D::~CScene2D(void)
 {
 	if (cSoundController)
 	{
-		// We won't delete this since it was created elsewhere
-		cSoundController = NULL;
+		cSoundController->Destroy();
 	}
 
 	if (cGameManager)
@@ -42,6 +42,8 @@ CScene2D::~CScene2D(void)
 		cGUI_Scene2D->Destroy();
 		cGUI_Scene2D = NULL;
 	}
+
+	cEntityManager2D->Exit();
 
 	// We won't delete this since it was created elsewhere
 	cKeyboardController = NULL;
@@ -85,19 +87,27 @@ bool CScene2D::Init(void)
 	// Set a shader to this class
 	cMap2D->SetShader("2DShader");
 	// Initialise the instance
-	if (cMap2D->Init(2, 24, 32) == false)
+	if (cMap2D->Init(5) == false)
 	{
 		cout << "Failed to load CMap2D" << endl;
 		return false;
 	}
-	// Load the map into an array
-	if (cMap2D->LoadMap("Maps/DM2213_Map_Level_01.csv") == false)
+	if (cMap2D->LoadMap("Maps/DM2213_Map_Level_01_DOWN.csv", 0) == false)
 	{
 		// The loading of a map has failed. Return false
 		return false;
 	}
-	// Load the map into an array
-	if (cMap2D->LoadMap("Maps/DM2213_Map_Level_02.csv", 1) == false)
+	if (cMap2D->LoadMap("Maps/DM2213_Map_Level_01_UP.csv", 1) == false)
+	{
+		// The loading of a map has failed. Return false
+		return false;
+	}
+	if (cMap2D->LoadMap("Maps/DM2213_Map_Level_01_RIGHT.csv", 2) == false)
+	{
+		// The loading of a map has failed. Return false
+		return false;
+	}
+	if (cMap2D->LoadMap("Maps/DM2213_Map_Level_01_LEFT.csv", 3) == false)
 	{
 		// The loading of a map has failed. Return false
 		return false;
@@ -110,6 +120,10 @@ bool CScene2D::Init(void)
 	CShaderManager::GetInstance()->Add("2DColorShader", "Shader//Scene2DColor.vs", "Shader//Scene2DColor.fs");
 	CShaderManager::GetInstance()->Use("2DColorShader");
 	CShaderManager::GetInstance()->activeShader->setInt("texture1", 0);
+
+	cEntityManager2D = CEntityManager2D::GetInstance();
+	cEntityManager2D->Init();
+
 	// Create and initialise the CPlayer2D
 	cPlayer2D = CPlayer2D::GetInstance();
 	// Pass shader to cPlayer2D
@@ -121,25 +135,19 @@ bool CScene2D::Init(void)
 		return false;
 	}
 
-	// Create and initialise the CEnemy2D
-	enemyVector.clear();
-	while (true)
+	// Create and initialise the cEnemy2D
+	cEnemy2D = new CEnemy2D();
+	// Pass shader to cEnemy2D
+	cEnemy2D->SetShader("2DColorShader");
+	// Initialise the instance
+	if (cEnemy2D->Init(CEnemy2D::ENEMY_TYPE::ENEMY_GOLEM) == false)
 	{
-		CEnemy2D* cEnemy2D = new CEnemy2D();
-		// Pass shader to cEnemy2D
-		cEnemy2D->SetShader("2DColorShader");
-		// Initialise the instance
-		if (cEnemy2D->Init() == true)
-		{
-			cEnemy2D->SetPlayer2D(cPlayer2D);
-			enemyVector.push_back(cEnemy2D);
-		}
-		else
-		{
-			// Break out of this loop if the enemy has all been loaded
-			break;
-		}
+		cout << "Failed to load cEnemy2D" << endl;
+		return false;
 	}
+
+	cEntityManager2D->AddEntity(cPlayer2D);
+	cEntityManager2D->AddEntity(cEnemy2D);
 
 	// Setup the shaders
 	CShaderManager::GetInstance()->Add("textShader", "Shader//text.vs", "Shader//text.fs");
@@ -156,8 +164,13 @@ bool CScene2D::Init(void)
 	cGameManager = CGameManager::GetInstance();
 	cGameManager->Init();
 
+	// CItemSpawner
+	cItemSpawner2D = CItemSpawner2D::GetInstance();
+	cItemSpawner2D->Init();
+
 	// Load the sounds into CSoundController
 	cSoundController = CSoundController::GetInstance();
+	cSoundController->Init();
 	cSoundController->LoadSound(FileSystem::getPath("Sounds\\Sound_Bell.ogg"), 1, true);
 	cSoundController->LoadSound(FileSystem::getPath("Sounds\\Sound_Explosion.ogg"), 2, true);
 	cSoundController->LoadSound(FileSystem::getPath("Sounds\\Sound_Jump.ogg"), 3, true);
@@ -172,6 +185,9 @@ bool CScene2D::Update(const double dElapsedTime)
 {
 	// Call the cPlayer2D's update method before Map2D as we want to capture the inputs before map2D update
 	cPlayer2D->Update(dElapsedTime);
+
+	//Collider - To be moved into separate class when have time
+	cEntityManager2D->Update(dElapsedTime);
 
 	// Call all the cEnemy2D's update method before Map2D 
 	// as we want to capture the updates before map2D update
@@ -207,7 +223,7 @@ bool CScene2D::Update(const double dElapsedTime)
 	// Check if the game should go to the next level
 	if (cGameManager->bLevelCompleted == true)
 	{
-		cMap2D->SetCurrentLevel(cMap2D->GetCurrentLevel()+1);
+		cMap2D->SetCurrentLevel(4);
 		cPlayer2D->Reset();
 		cGameManager->bLevelCompleted = false;
 	}
@@ -248,6 +264,8 @@ void CScene2D::PreRender(void)
  */
 void CScene2D::Render(void)
 {
+	cEntityManager2D->RenderEntities();
+
 	for (int i = 0; i < enemyVector.size(); i++)
 	{
 		// Call the CEnemy2D's PreRender()
