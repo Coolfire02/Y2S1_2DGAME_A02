@@ -24,6 +24,9 @@ using namespace std;
 // Include math.h
 #include <math.h>
 
+// Include Game Manager
+#include "GameManager.h"
+
 /**
  @brief Constructor This constructor has protected access modifier as this class will be a Singleton
  */
@@ -35,6 +38,7 @@ CEnemy2D::CEnemy2D(void)
 	, sCurrentFSM(FSM::IDLE)
 	, iFSMCounter(0)
 	, quadMesh(NULL)
+	, cSoundController(NULL)
 {
 	transform = glm::mat4(1.0f);	// make sure to initialize matrix to identity matrix first
 
@@ -49,6 +53,26 @@ CEnemy2D::CEnemy2D(void)
 
 	i32vec2Destination = glm::i32vec2(0, 0);	// Initialise the iDestination
 	i32vec2Direction = glm::i32vec2(0, 0);		// Initialise the iDirection
+
+	name = "Enemy";
+}
+
+void CEnemy2D::CollidedWith(CEntity2D* entity)
+{
+	if (entity->name == "Bomb")
+	{
+		CInventoryItem* eHealth = cInventoryManager->GetItem("EnemyHealth");
+		eHealth->Remove(25);
+		cSoundController->PlaySoundByID(2);
+		std::cout << "Ehealth:" << eHealth->GetCount() << std::endl;
+		entity->dead = true;
+		if (eHealth->GetCount() <= 0)
+		{
+			this->dead = true;
+
+			CGameManager::GetInstance()->bLevelCompleted = true;
+		}
+	}
 }
 
 /**
@@ -67,6 +91,9 @@ CEnemy2D::~CEnemy2D(void)
 	cPlayer2D = NULL;
 
 	// We won't delete this since it was created elsewhere
+	cSoundController = NULL;
+
+	// We won't delete this since it was created elsewhere
 	cMap2D = NULL;
 
 	// optional: de-allocate all resources once they've outlived their purpose:
@@ -78,17 +105,21 @@ CEnemy2D::~CEnemy2D(void)
 /**
   @brief Initialise this instance
   */
-bool CEnemy2D::Init(void)
+bool CEnemy2D::Init(ENEMY_TYPE type)
 {
+	this->type = type;
+	this->enemySpeed = 3.f;
 	// Get the handler to the CSettings instance
 	cSettings = CSettings::GetInstance();
+
+	cInventoryManager = CInventoryManager::GetInstance();
 
 	// Get the handler to the CMap2D instance
 	cMap2D = CMap2D::GetInstance();
 	// Find the indices for the player in arrMapInfo, and assign it to cPlayer2D
 	unsigned int uiRow = -1;
 	unsigned int uiCol = -1;
-	if (cMap2D->FindValue(300, uiRow, uiCol) == false)
+	if (cMap2D->FindValue(4, uiRow, uiCol) == false)
 		return false;	// Unable to find the start position of the player, so quit this game
 
 	// Erase the value of the player in the arrMapInfo
@@ -101,6 +132,27 @@ bool CEnemy2D::Init(void)
 
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
+
+	// Load the player texture
+	switch (type)
+	{
+	case ENEMY_GOLEM:
+		if (LoadTexture("Image/scene2d_golemenemy.png", iTextureID) == false)
+		{
+			std::cout << "Failed to load golem tile texture" << std::endl;
+			return false;
+		}
+		//CS: Create the animated sprite and setup the animation 
+		animatedSprites = CMeshBuilder::GenerateSpriteAnimation(1, 40, cSettings->TILE_WIDTH, cSettings->TILE_HEIGHT);
+		animatedSprites->AddAnimation("idle", 0, 11);
+		animatedSprites->AddAnimation("right", 12, 40);
+		//CS: Play the "idle" animation as default
+		animatedSprites->PlayAnimation("idle", -1, enemySpeed);
+		break;
+	default:
+		std::cout << "Failed to load enemy tile texture (None found)" << std::endl;
+		return false;
+	}
 
 	//CS: Create the Quad Mesh using the mesh builder
 	quadMesh = CMeshBuilder::GenerateQuad(glm::vec4(1, 1, 1, 1), cSettings->TILE_WIDTH, cSettings->TILE_HEIGHT);
@@ -118,6 +170,9 @@ bool CEnemy2D::Init(void)
 	// Set the Physics to fall status by default
 	cPhysics2D.Init();
 	cPhysics2D.SetStatus(CPhysics2D::STATUS::FALL);
+
+	// Get the handler to the CSoundController
+	cSoundController = CSoundController::GetInstance();
 
 	// If this class is initialised properly, then set the bIsActive to true
 	bIsActive = true;
@@ -233,6 +288,12 @@ void CEnemy2D::Update(const double dElapsedTime)
 
 	// Update Jump or Fall
 	UpdateJumpFall(dElapsedTime);
+	
+	// Update the Health and Lives
+	UpdateHealthLives();
+
+	//CS: Update the animated sprite
+	animatedSprites->Update(dElapsedTime);
 
 	// Update the UV Coordinates
 	vec2UVCoordinate.x = cSettings->ConvertIndexToUVSpace(cSettings->x, i32vec2Index.x, false, i32vec2NumMicroSteps.x*cSettings->MICRO_STEP_XAXIS);
@@ -285,7 +346,8 @@ void CEnemy2D::Render(void)
 
 	// Render the tile
 	//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	quadMesh->Render();
+	//CS: Render the animated sprite
+	animatedSprites->Render();
 
 	glBindVertexArray(0);
 
@@ -337,6 +399,27 @@ void CEnemy2D::SetPlayer2D(CPlayer2D* cPlayer2D)
 	UpdateDirection();
 }
 
+void CEnemy2D::InteractWithMap(void)
+{
+	switch (cMap2D->GetMapInfo(i32vec2Index.y, i32vec2Index.x))
+	{
+	case 2:
+		// Erase the tree from this position
+		cMap2D->SetMapInfo(i32vec2Index.y, i32vec2Index.x, 0);
+		// Increase the Tree by 1
+
+		cSoundController->PlaySoundByID(1);
+		break;
+	}
+}
+
+/**
+ @brief Update the health and lives.
+ */
+void CEnemy2D::UpdateHealthLives(void)
+{
+
+}
 
 /**
 @brief Load a texture, assign it a code and store it in MapOfTextureIDs.

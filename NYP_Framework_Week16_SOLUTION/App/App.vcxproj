@@ -18,6 +18,7 @@
     <ClCompile Include="Source\GameStateManagement\PlayGameState.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Scene2D\BackgroundEntity.cpp" />
+    <ClCompile Include="Source\Scene2D\Bomb2D.cpp" />
     <ClCompile Include="Source\Scene2D\Enemy2D.cpp" />
     <ClCompile Include="Source\Scene2D\GameManager.cpp" />
     <ClCompile Include="Source\Scene2D\GUI_Scene2D.cpp" />
@@ -38,6 +39,7 @@
     <ClInclude Include="Source\GameStateManagement\MenuState.h" />
     <ClInclude Include="Source\GameStateManagement\PlayGameState.h" />
     <ClInclude Include="Source\Scene2D\BackgroundEntity.h" />
+    <ClInclude Include="Source\Scene2D\Bomb2D.h" />
     <ClInclude Include="Source\Scene2D\Enemy2D.h" />
     <ClInclude Include="Source\Scene2D\GameManager.h" />
     <ClInclude Include="Source\Scene2D\GUI_Scene2D.h" />

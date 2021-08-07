@@ -19,6 +19,9 @@
 // Include the Map2D as we will use it to check the player's movements and actions
 class CMap2D;
 
+// Include Keyboard controller
+#include "Inputs\KeyboardController.h"
+
 // Include Settings
 #include "GameControl\Settings.h"
 
@@ -28,9 +31,24 @@ class CMap2D;
 // Include Player2D
 #include "Player2D.h"
 
+// Include AnimatedSprites
+#include "Primitives/SpriteAnimation.h"
+
+// Include InventoryManager
+#include "InventoryManager.h"
+
+// Include SoundController
+#include "..\SoundController\SoundController.h"
+
 class CEnemy2D : public CEntity2D
 {
 public:
+
+	enum ENEMY_TYPE {
+		ENEMY_GOLEM,
+		ENEMY_COUNT
+	};
+
 	// Constructor
 	CEnemy2D(void);
 
@@ -38,7 +56,9 @@ public:
 	virtual ~CEnemy2D(void);
 
 	// Init
-	bool Init(void);
+	bool Init(ENEMY_TYPE type);
+
+	void CollidedWith(CEntity2D*);
 
 	// Update
 	void Update(const double dElapsedTime);
@@ -94,6 +114,16 @@ protected:
 		NUM_FSM
 	};
 
+	ENEMY_TYPE type;
+	float enemySpeed;
+	// Handle to the CPlayer2D
+	CPlayer2D* cPlayer2D;
+
+	// InventoryManager
+	CInventoryManager* cInventoryManager;
+	// InventoryItem
+	CInventoryItem* cInventoryItem;
+
 	glm::i32vec2 i32vec2OldIndex;
 
 	//CS: The quadMesh for drawing the tiles
@@ -126,11 +156,14 @@ protected:
 	// Physics
 	CPhysics2D cPhysics2D;
 
+	//CS: Animated Sprite
+	CSpriteAnimation* animatedSprites;
+
 	// Current color
 	glm::vec4 currentColor;
 
-	// Handle to the CPlayer2D
-	CPlayer2D* cPlayer2D;
+	// Handler to the CSoundController
+	CSoundController* cSoundController;
 
 	// Current FSM
 	FSM sCurrentFSM;
@@ -158,6 +191,12 @@ protected:
 
 	// Let enemy2D interact with the player
 	bool InteractWithPlayer(void);
+
+	// Let enemy interact with the map
+	void InteractWithMap(void);
+
+	// Update the health and lives
+	void UpdateHealthLives(void);
 
 	// Update direction
 	void UpdateDirection(void);

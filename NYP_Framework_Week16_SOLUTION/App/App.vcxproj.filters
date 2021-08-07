@@ -74,6 +74,9 @@
     <ClCompile Include="Source\Scene2D\BackgroundEntity.cpp">
       <Filter>Scene2D</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Scene2D\Bomb2D.cpp">
+      <Filter>Scene2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -128,6 +131,9 @@
       <Filter>GameStateManagement</Filter>
     </ClInclude>
     <ClInclude Include="Source\Scene2D\BackgroundEntity.h">
+      <Filter>Scene2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene2D\Bomb2D.h">
       <Filter>Scene2D</Filter>
     </ClInclude>
   </ItemGroup>
