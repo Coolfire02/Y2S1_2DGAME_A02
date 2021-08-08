@@ -22,6 +22,11 @@ using namespace std;
 // Include SoundInfo class; it stores the sound and other information
 #include "SoundInfo.h"
 
+// Include SoundType enum
+#include "SoundType.h"
+
+typedef struct Fader Fader;
+
 class CSoundController : public CSingletonTemplate<CSoundController>
 {
 	friend CSingletonTemplate<CSoundController>;
@@ -37,8 +42,14 @@ public:
 					CSoundInfo::SOUNDTYPE eSoundType = CSoundInfo::SOUNDTYPE::_2D,
 					vec3df vec3dfSoundPos = vec3df(0.0f, 0.0f, 0.0f));
 
+	void FadeUpdater(double dt);
+	double ElapsedTime();
+
 	// Play a sound by its ID
 	void PlaySoundByID(const int ID);
+	void PlaySoundByID(const int ID, float fadeTime, float fadeLeadTime);
+	bool StopPlayingSoundByID(const int ID);
+	void StopPlayingSoundByID(const int ID, float fadeTime, float fadeLeadTime);
 
 	// Increase Master volume
 	bool MasterVolumeIncrease(void);
@@ -47,8 +58,10 @@ public:
 
 	// Increase volume of a ISoundSource
 	bool VolumeIncrease(const int ID);
+	bool VolumeIncrease(const int ID, float mag);
 	// Decrease volume of a ISoundSource
 	bool VolumeDecrease(const int ID);
+	bool VolumeDecrease(const int ID, float mag);
 
 	// For 3D sounds only
 	// Set Listener position
@@ -80,5 +93,25 @@ protected:
 	vec3df vec3dfListenerPos;
 	// For 3D sound only: Listender view direction
 	vec3df vec3dfListenerDir;
+
+	std::map<int, Fader*> fadeIn;
+	std::map<int, Fader*> fadeOut;
+	std::map<int, ISound*> activeSound;
+
+private:
+	double elapsed;
 };
+
+struct Fader
+{
+	float elapsed_fadeStartAt;
+	float elapsed_fadeEndAt;
+	float magnitudePerSecond;
+	Fader(float fadeTime, float leadTime) {
+		elapsed_fadeEndAt = CSoundController::GetInstance()->ElapsedTime() + leadTime + fadeTime;
+		elapsed_fadeStartAt = elapsed_fadeEndAt - fadeTime;
+		magnitudePerSecond = 1.0 / fadeTime;
+	}
+};
+
 

@@ -23,6 +23,7 @@ CEntity2D::CEntity2D(void)
 	, VBO(0)
 	, EBO(0)
 	, iTextureID(0)
+	, dead(false)
 	, cSettings(NULL)
 	, mesh(NULL)
 {
@@ -118,6 +119,11 @@ bool CEntity2D::Init(void)
  */
 void CEntity2D::Update(const double dElapsedTime)
 {
+}
+
+void CEntity2D::CollidedWith(CEntity2D* entity)
+{
+
 }
 
 /**

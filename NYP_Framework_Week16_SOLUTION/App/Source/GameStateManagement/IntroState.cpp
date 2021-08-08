@@ -30,6 +30,8 @@
 // Include CSettings
 #include "GameControl/Settings.h"
 
+#include "System\filesystem.h"
+
 // Include CKeyboardController
 #include "Inputs/KeyboardController.h"
 
@@ -63,6 +65,25 @@ bool CIntroState::Init(void)
 	CShaderManager::GetInstance()->Use("2DShader");
 	CShaderManager::GetInstance()->activeShader->setInt("texture1", 0);
 
+	// Load the sounds into CSoundController
+	soundController = CSoundController::GetInstance();
+	soundController->Init();
+	soundController->LoadSound(FileSystem::getPath("Sounds\\Sound_BombExplosion.wav"), SOUND_TYPE::BOMB_EXPLOSION, true);
+	soundController->LoadSound(FileSystem::getPath("Sounds\\Sound_DirtLand.wav"), SOUND_TYPE::LANDED_GRASS, true);
+	soundController->LoadSound(FileSystem::getPath("Sounds\\Sound_DirtWalk.ogg"), SOUND_TYPE::WALKING_GRASS, true);
+	soundController->LoadSound(FileSystem::getPath("Sounds\\Sound_GameOver.wav"), SOUND_TYPE::GAME_OVER_LOSE, true);
+	soundController->LoadSound(FileSystem::getPath("Sounds\\Sound_GameWin.wav"), SOUND_TYPE::GAME_OVER_WIN, true);
+	soundController->LoadSound(FileSystem::getPath("Sounds\\Sound_ItemPickup.wav"), SOUND_TYPE::ITEM_PICKUP, true);
+	soundController->LoadSound(FileSystem::getPath("Sounds\\Sound_LevelRotation.wav"), SOUND_TYPE::LEVEL_ROTATION, true);
+	soundController->LoadSound(FileSystem::getPath("Sounds\\Sound_Warp.wav"), SOUND_TYPE::WARP, true);
+	soundController->LoadSound(FileSystem::getPath("Sounds\\Sound_Selector.wav"), SOUND_TYPE::SELECTOR, true);
+	//Loopables
+	soundController->LoadSound(FileSystem::getPath("Sounds\\Sound_GameBG1.wav"), SOUND_TYPE::BG_ARCADE, true, true);
+	soundController->LoadSound(FileSystem::getPath("Sounds\\Sound_GameBG2.wav"), SOUND_TYPE::BG_ARCADE2, true, true);
+	soundController->LoadSound(FileSystem::getPath("Sounds\\Sound_MainMenu.wav"), SOUND_TYPE::BG_MAINMENU, true, true);
+
+	CSoundController::GetInstance()->PlaySoundByID(SOUND_TYPE::BG_MAINMENU);
+
 	//Create Background Entity
 	background = new CBackgroundEntity("Image/IntroBackground.png");
 	background->SetShader("2DShader");
@@ -81,6 +102,9 @@ bool CIntroState::Update(const double dElapsedTime)
 	{
 		// Reset the CKeyboardController
 		CKeyboardController::GetInstance()->Reset();
+
+		// End BG Main Menu Music
+		soundController->StopPlayingSoundByID(SOUND_TYPE::BG_MAINMENU, 3.0, 0.0);
 
 		// Load the menu state
 		cout << "Loading MenuState" << endl;

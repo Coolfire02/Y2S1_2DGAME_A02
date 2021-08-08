@@ -42,6 +42,8 @@
 // GUI_Scene2D
 #include "GUI_Scene2D.h"
 
+#include "..\SoundController\SoundType.h"
+
 // Game Manager
 #include "GameManager.h"
 

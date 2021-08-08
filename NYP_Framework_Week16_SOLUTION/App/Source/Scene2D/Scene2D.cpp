@@ -59,7 +59,6 @@ CScene2D::~CScene2D(void)
 	if (cPlayer2D)
 	{
 		cPlayer2D->Destroy();
-		cPlayer2D = NULL;
 	}
 
 	if (cMap2D)
@@ -78,7 +77,7 @@ CScene2D::~CScene2D(void)
 bool CScene2D::Init(void)
 {
 	// Include Shader Manager
-	//CShaderManager::GetInstance()->Add("2DShader", "Shader//Scene2D.vs", "Shader//Scene2D.fs");
+	CShaderManager::GetInstance()->Add("2DShader", "Shader//Scene2D.vs", "Shader//Scene2D.fs");
 	CShaderManager::GetInstance()->Use("2DShader");
 	CShaderManager::GetInstance()->activeShader->setInt("texture1", 0);
 
@@ -124,6 +123,9 @@ bool CScene2D::Init(void)
 	cEntityManager2D = CEntityManager2D::GetInstance();
 	cEntityManager2D->Init();
 
+	// Store the keyboard controller singleton instance here
+	cKeyboardController = CKeyboardController::GetInstance();
+
 	// Create and initialise the CPlayer2D
 	cPlayer2D = CPlayer2D::GetInstance();
 	// Pass shader to cPlayer2D
@@ -139,6 +141,7 @@ bool CScene2D::Init(void)
 	cEnemy2D = new CEnemy2D();
 	// Pass shader to cEnemy2D
 	cEnemy2D->SetShader("2DColorShader");
+	cEnemy2D->SetPlayer2D(cPlayer2D);
 	// Initialise the instance
 	if (cEnemy2D->Init(CEnemy2D::ENEMY_TYPE::ENEMY_GOLEM) == false)
 	{
@@ -153,9 +156,6 @@ bool CScene2D::Init(void)
 	CShaderManager::GetInstance()->Add("textShader", "Shader//text.vs", "Shader//text.fs");
 	CShaderManager::GetInstance()->Use("textShader");
 
-	// Store the keyboard controller singleton instance here
-	cKeyboardController = CKeyboardController::GetInstance();
-
 	// Store the cGUI_Scene2D singleton instance here
 	cGUI_Scene2D = CGUI_Scene2D::GetInstance();
 	cGUI_Scene2D->Init();
@@ -168,12 +168,10 @@ bool CScene2D::Init(void)
 	cItemSpawner2D = CItemSpawner2D::GetInstance();
 	cItemSpawner2D->Init();
 
-	// Load the sounds into CSoundController
-	cSoundController = CSoundController::GetInstance();
-	cSoundController->Init();
-	cSoundController->LoadSound(FileSystem::getPath("Sounds\\Sound_Bell.ogg"), 1, true);
-	cSoundController->LoadSound(FileSystem::getPath("Sounds\\Sound_Explosion.ogg"), 2, true);
-	cSoundController->LoadSound(FileSystem::getPath("Sounds\\Sound_Jump.ogg"), 3, true);
+
+	CSoundController::GetInstance()->PlaySoundByID(SOUND_TYPE::BG_ARCADE);
+
+
 
 	return true;
 }

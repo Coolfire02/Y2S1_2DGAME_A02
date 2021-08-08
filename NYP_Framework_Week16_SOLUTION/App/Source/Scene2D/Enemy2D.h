@@ -162,6 +162,9 @@ protected:
 	// Current color
 	glm::vec4 currentColor;
 
+	// Keyboard Controller singleton instance
+	CKeyboardController* cKeyboardController;
+
 	// Handler to the CSoundController
 	CSoundController* cSoundController;
 

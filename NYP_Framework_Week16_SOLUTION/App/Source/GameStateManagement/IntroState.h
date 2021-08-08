@@ -13,6 +13,9 @@
 #include "../Scene2D/BackgroundEntity.h"
 #include <string>
 
+#include "..\SoundController\SoundController.h"
+#include "..\SoundController\SoundType.h"
+
 class CIntroState : public CGameStateBase
 {
 public:
@@ -32,4 +35,5 @@ public:
 
 protected:
 	CBackgroundEntity* background;
+	CSoundController* soundController;
 };

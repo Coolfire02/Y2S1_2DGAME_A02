@@ -23,6 +23,9 @@
 #define IMGUI_ACTIVE
 #endif
 
+#include "..\SoundController\SoundController.h"
+#include "..\SoundController\SoundType.h"
+
 struct ButtonData
 {
 	std::string fileName;
@@ -50,4 +53,5 @@ protected:
 	CBackgroundEntity* background;
 	ButtonData startButtonData;
 	ButtonData exitButtonData;
+	CSoundController* soundController;
 };

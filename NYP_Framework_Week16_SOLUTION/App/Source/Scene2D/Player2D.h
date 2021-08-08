@@ -133,7 +133,19 @@ protected:
 	bool LoadTexture(const char* filename, GLuint& iTextureID);
 
 	// Constraint the player's position within a boundary
-	void Constraint(DIRECTION eDirection = LEFT);
+	void Constraint(CPhysics2D::DIRECTION eDirection = CPhysics2D::DIRECTION::LEFT);
+
+	// Check if a position is possible to move into
+	bool CheckPosition(CPhysics2D::DIRECTION eDirection);
+
+	// Check if Player is at Top Row based on Gravity Dir
+	bool PlayerIsOnTopRow();
+
+	// Check if Player is on Bottom Row based on Gravity Dir
+	bool PlayerIsOnBottomRow();
+
+	// Move in a Direction
+	void Move(CPhysics2D::DIRECTION eDirection, const double dElapsedTime);
 
 	// Check if a position is possible to move into
 	bool CheckPosition(DIRECTION eDirection);

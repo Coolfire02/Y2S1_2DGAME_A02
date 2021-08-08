@@ -208,5 +208,8 @@
     <ClInclude Include="Source\GUI\backends\imgui_impl_opengl3.h">
       <Filter>GUI</Filter>
     </ClInclude>
+    <ClInclude Include="Source\System\MyMath.h">
+      <Filter>System</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

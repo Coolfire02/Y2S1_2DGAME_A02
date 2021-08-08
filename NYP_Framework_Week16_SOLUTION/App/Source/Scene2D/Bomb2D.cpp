@@ -575,6 +575,7 @@ void CBomb2D::InteractWithMap(void)
 	if (id > CMap2D::TILE_ID::INTERACTABLES_END && id < CMap2D::TILE_ID::BLOCK_END)
 	{
 		cMap2D->SetMapInfo(i32vec2Index.y, i32vec2Index.x, 0);
+		cSoundController->PlaySoundByID(SOUND_TYPE::BOMB_EXPLOSION);
 		dead = true;
 		
 		// Explosion sound

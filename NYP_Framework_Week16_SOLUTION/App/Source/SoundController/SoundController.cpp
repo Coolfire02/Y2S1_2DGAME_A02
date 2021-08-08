@@ -10,6 +10,7 @@ CSoundController::CSoundController(void)
 	: cSoundEngine(NULL)
 	, vec3dfListenerPos(vec3df(0, 0, 0))
 	, vec3dfListenerDir(vec3df(0, 0, 1))
+	, elapsed(0.0)
 {
 }
 
@@ -102,8 +103,102 @@ bool CSoundController::LoadSound(	string filename,
 
 	// Set to soundMap
 	soundMap[ID] = cSoundInfo;
+	pSoundSource->setDefaultVolume(1.0);
 
 	return true;
+}
+
+bool CSoundController::StopPlayingSoundByID(const int ID)
+{
+	CSoundInfo* pSoundInfo = GetSound(ID);
+	if (cSoundEngine->isCurrentlyPlaying(pSoundInfo->GetSound()))
+	{
+		cSoundEngine->stopAllSoundsOfSoundSource(pSoundInfo->GetSound());
+		return true;
+	}
+	return false;
+}
+
+void CSoundController::FadeUpdater(double dt)
+{
+	elapsed += dt;
+	for (int i = 0; i < fadeIn.size(); ++i)
+	{
+		if (fadeIn[i] == nullptr) continue;
+		if (elapsed >= fadeIn[i]->elapsed_fadeStartAt)
+		{
+			CSoundInfo* pSoundInfo = GetSound(i);
+			if (!pSoundInfo)
+			{
+				delete fadeIn[i];
+				fadeIn[i] = nullptr;
+				break;
+			}
+			if (!(cSoundEngine->isCurrentlyPlaying(pSoundInfo->GetSound())))
+			{
+				if (pSoundInfo->GetSoundType() == CSoundInfo::SOUNDTYPE::_2D)
+				{
+					activeSound[i] = cSoundEngine->play2D(pSoundInfo->GetSound(),
+						pSoundInfo->GetLoopStatus(), false, true);
+				}
+				else if (pSoundInfo->GetSoundType() == CSoundInfo::SOUNDTYPE::_3D)
+				{
+					cSoundEngine->setListenerPosition(vec3dfListenerPos, vec3dfListenerDir);
+					activeSound[i] = cSoundEngine->play3D(pSoundInfo->GetSound(),
+						pSoundInfo->GetPosition(),
+						pSoundInfo->GetLoopStatus());
+				}
+				activeSound[i]->setVolume(0.f);
+			}
+			this->VolumeIncrease(i, fadeIn[i]->magnitudePerSecond * dt);
+			cout << "Fadein vol: " << activeSound[i]->getVolume() << endl;
+			if (activeSound[i]->getVolume() >= 1.0f)
+			{
+				delete fadeIn[i];
+				fadeIn[i] = nullptr;
+			}
+		}
+	}
+
+	for (int i = 0; i < fadeOut.size(); ++i)
+	{
+		if (fadeOut[i] == nullptr) continue;
+		if (elapsed >= fadeOut[i]->elapsed_fadeStartAt)
+		{
+			CSoundInfo* pSoundInfo = GetSound(i);
+			if ((cSoundEngine->isCurrentlyPlaying(pSoundInfo->GetSound())))
+			{
+				this->VolumeDecrease(i, fadeOut[i]->magnitudePerSecond * dt);
+				if (GetSound(i)->GetSound()->getDefaultVolume() <= 0.0f)
+				{
+					this->StopPlayingSoundByID(i);
+					delete fadeOut[i];
+					fadeOut[i] = nullptr;
+				}
+			}
+			else {
+				delete fadeOut[i];
+				fadeOut[i] = nullptr;
+			}
+		}
+	}
+}
+
+double CSoundController::ElapsedTime()
+{
+	return elapsed;
+}
+
+void CSoundController::PlaySoundByID(const int ID, float fadeTime, float fadeLeadTime)
+{
+	if(fadeIn[ID] == nullptr)
+		fadeIn[ID] = new Fader(fadeTime, fadeLeadTime);
+}
+
+void CSoundController::StopPlayingSoundByID(const int ID, float fadeTime, float fadeLeadTime)
+{
+	if(fadeOut[ID] == nullptr)
+		fadeOut[ID] = new Fader(fadeTime, fadeLeadTime);
 }
 
 /**
@@ -126,13 +221,13 @@ void CSoundController::PlaySoundByID(const int ID)
 
 	if (pSoundInfo->GetSoundType() == CSoundInfo::SOUNDTYPE::_2D)
 	{
-		cSoundEngine->play2D(	pSoundInfo->GetSound(), 
-								pSoundInfo->GetLoopStatus());
+		activeSound[ID] = cSoundEngine->play2D(	pSoundInfo->GetSound(), 
+								pSoundInfo->GetLoopStatus(), false, true);
 	}
 	else if (pSoundInfo->GetSoundType() == CSoundInfo::SOUNDTYPE::_3D)
 	{
 		cSoundEngine->setListenerPosition(vec3dfListenerPos, vec3dfListenerDir);
-		cSoundEngine->play3D(	pSoundInfo->GetSound(), 
+		activeSound[ID] = cSoundEngine->play3D(	pSoundInfo->GetSound(),
 								pSoundInfo->GetPosition(), 
 								pSoundInfo->GetLoopStatus());
 	}
@@ -177,34 +272,48 @@ bool CSoundController::MasterVolumeDecrease(void)
 }
 
 
+bool CSoundController::VolumeIncrease(const int ID)
+{
+	return VolumeIncrease(ID, 0.1f);
+	
+}
+
 /**
  @brief Increase volume of a ISoundSource
  @param ID A const int variable which contains the ID of the iSoundSource in the map
  @return true if successfully decreased volume, else false
  */
-bool CSoundController::VolumeIncrease(const int ID)
+bool CSoundController::VolumeIncrease(const int ID, float mag)
 {
 	// Get the ISoundSource
-	ISoundSource* pISoundSource = GetSound(ID)->GetSound();
-	if (pISoundSource != nullptr)
+	ISound* pISoundSource = activeSound[ID];
+	if (pISoundSource == nullptr)
 	{
 		return false;
 	}
 
 	// Get the current volume
-	float fCurrentVolume = pISoundSource->getDefaultVolume();
+	float fCurrentVolume = pISoundSource->getVolume();
+
+	// Increase the volume by mag
+	pISoundSource->setVolume(fCurrentVolume + mag);
 
 	// Check if the maximum volume has been reached
-	if (fCurrentVolume >= 1.0f)
+	if (pISoundSource->getVolume() >= 1.0f)
 	{
-		pISoundSource->setDefaultVolume(1.0f);
+		pISoundSource->setVolume(1.0f);
 		return false;
 	}
 
-	// Increase the volume by 10%
-	pISoundSource->setDefaultVolume(fCurrentVolume + 0.1f);
+
+
 
 	return true;
+}
+
+bool CSoundController::VolumeDecrease(const int ID)
+{
+	return VolumeDecrease(ID, 0.1f);
 }
 
 /**
@@ -212,27 +321,27 @@ bool CSoundController::VolumeIncrease(const int ID)
  @param ID A const int variable which contains the ID of the iSoundSource in the map
  @return true if successfully decreased volume, else false
  */
-bool CSoundController::VolumeDecrease(const int ID)
+bool CSoundController::VolumeDecrease(const int ID, float mag)
 {
 	// Get the ISoundSource
-	ISoundSource* pISoundSource = GetSound(ID)->GetSound();
-	if (pISoundSource != nullptr)
+	ISound* pISoundSource = activeSound[ID];
+	if (pISoundSource == nullptr)
 	{
 		return false;
 	}
 
 	// Get the current volume
-	float fCurrentVolume = pISoundSource->getDefaultVolume();
-
-	// Check if the minimum volume has been reached
-	if (fCurrentVolume <= 0.0f)
-	{
-		pISoundSource->setDefaultVolume(0.0f);
-		return false;
-	}
+	float fCurrentVolume = pISoundSource->getVolume();
 
 	// Decrease the volume by 10%
-	pISoundSource->setDefaultVolume(fCurrentVolume - 0.1f);
+	pISoundSource->setVolume(fCurrentVolume - mag);
+
+	// Check if the minimum volume has been reached
+	if (pISoundSource->getVolume() <= 0.0f)
+	{
+		pISoundSource->setVolume(0.0f);
+		return false;
+	}
 
 	return true;
 }

@@ -19,6 +19,7 @@ using namespace std;
 // Include ImageLoader
 #include "System\ImageLoader.h"
 
+
 // Include the Map2D as we will use it to check the player's movements and actions
 #include "Map2D.h"
 // Include math.h
@@ -62,15 +63,20 @@ void CEnemy2D::CollidedWith(CEntity2D* entity)
 	if (entity->name == "Bomb")
 	{
 		CInventoryItem* eHealth = cInventoryManager->GetItem("EnemyHealth");
-		eHealth->Remove(25);
-		cSoundController->PlaySoundByID(2);
+		eHealth->Remove(50);
+		cSoundController->PlaySoundByID(SOUND_TYPE::BOMB_EXPLOSION);
 		std::cout << "Ehealth:" << eHealth->GetCount() << std::endl;
 		entity->dead = true;
 		if (eHealth->GetCount() <= 0)
 		{
 			this->dead = true;
-
+			cSoundController->PlaySoundByID(SOUND_TYPE::GAME_OVER_WIN);
 			CGameManager::GetInstance()->bLevelCompleted = true;
+		}
+		else if (eHealth->GetCount() <= 50)
+		{
+			CSoundController::GetInstance()->StopPlayingSoundByID(SOUND_TYPE::BG_ARCADE, 2, 0);
+			CSoundController::GetInstance()->PlaySoundByID(SOUND_TYPE::BG_ARCADE2, 2, 1);
 		}
 	}
 }
@@ -113,6 +119,7 @@ bool CEnemy2D::Init(ENEMY_TYPE type)
 	cSettings = CSettings::GetInstance();
 
 	cInventoryManager = CInventoryManager::GetInstance();
+	cKeyboardController = CKeyboardController::GetInstance();
 
 	// Get the handler to the CMap2D instance
 	cMap2D = CMap2D::GetInstance();
@@ -151,16 +158,6 @@ bool CEnemy2D::Init(ENEMY_TYPE type)
 		break;
 	default:
 		std::cout << "Failed to load enemy tile texture (None found)" << std::endl;
-		return false;
-	}
-
-	//CS: Create the Quad Mesh using the mesh builder
-	quadMesh = CMeshBuilder::GenerateQuad(glm::vec4(1, 1, 1, 1), cSettings->TILE_WIDTH, cSettings->TILE_HEIGHT);
-
-	// Load the enemy2D texture
-	if (LoadTexture("Image/Scene2D_EnemyTile.tga", iTextureID) == false)
-	{
-		std::cout << "Failed to load enemy2D tile texture" << std::endl;
 		return false;
 	}
 
@@ -285,6 +282,27 @@ void CEnemy2D::Update(const double dElapsedTime)
 	default:
 		break;
 	}
+
+
+	if (cKeyboardController->IsKeyDown(GLFW_KEY_G))
+	{
+		CInventoryItem* eHealth = cInventoryManager->GetItem("EnemyHealth");
+		eHealth->Remove(50);
+		cSoundController->PlaySoundByID(SOUND_TYPE::BOMB_EXPLOSION);
+		std::cout << "Ehealth:" << eHealth->GetCount() << std::endl;
+		if (eHealth->GetCount() <= 0)
+		{
+			this->dead = true;
+			cSoundController->PlaySoundByID(SOUND_TYPE::GAME_OVER_WIN);
+			CGameManager::GetInstance()->bLevelCompleted = true;
+		}
+		else if (eHealth->GetCount() <= 50)
+		{
+			CSoundController::GetInstance()->StopPlayingSoundByID(SOUND_TYPE::BG_ARCADE, 2, 0);
+			CSoundController::GetInstance()->PlaySoundByID(SOUND_TYPE::BG_ARCADE2, 2, 1);
+		}
+	}
+
 
 	// Update Jump or Fall
 	UpdateJumpFall(dElapsedTime);

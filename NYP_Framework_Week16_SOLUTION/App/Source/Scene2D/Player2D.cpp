@@ -78,6 +78,39 @@ CPlayer2D::~CPlayer2D(void)
 }
 
 /**
+ @brief Reset this instance
+ */
+bool CPlayer2D::Reset()
+{
+	unsigned int uiRow = -1;
+	unsigned int uiCol = -1;
+	if (cMap2D->FindValue(3, uiRow, uiCol) == false)
+		return false;	// Unable to find the start position of the player, so quit this game
+
+	// Erase the value of the player in the arrMapInfo
+	cMap2D->SetMapInfo(uiRow, uiCol, 0);
+
+	// Set the start position of the Player to iRow and iCol
+	i32vec2Index = glm::i32vec2(uiCol, uiRow);
+	// By default, microsteps should be zero
+	i32vec2NumMicroSteps = glm::i32vec2(0, 0);
+
+	//Set it to fall upon entering new level
+	cPhysics2D.SetStatus(CPhysics2D::STATUS::FALL);
+
+	//CS: Reset double jump
+	jumpCount = 0;
+
+	//CS: Play the "idle" animation as default
+	animatedSprites->PlayAnimation("idle", -1, 1.0f);
+
+	//CS: Init the color to white
+	currentColor = glm::vec4(1.0, 1.0, 1.0, 1.0);
+
+	return true;
+}
+
+/**
   @brief Initialise this instance
   */
 bool CPlayer2D::Init(void)
@@ -203,6 +236,10 @@ void CPlayer2D::Update(const double dElapsedTime)
 		nextSwitchCD -= dElapsedTime;
 		if (nextSwitchCD <= 0)
 		{
+
+			//Play warp sound
+			CSoundController::GetInstance()->PlaySoundByID(SOUND_TYPE::LEVEL_ROTATION);
+
 			cMap2D->ClearInteractables();
 			nextSwitchCD = Math::RandFloatMinMax(5.5f, 18.f);
 			std::vector<int> nums;
@@ -255,7 +292,7 @@ void CPlayer2D::Update(const double dElapsedTime)
 			relativeDir *= 0.33;
 			cPhysics2D.SetInitialVelocity(relativeDir);
 			// Play a sound for jump
-			cSoundController->PlaySoundByID(3);
+			//cSoundController->PlaySoundByID(3);
 		}
 		else if (cPhysics2D.GetStatus() == CPhysics2D::STATUS::JUMP ||
 			cPhysics2D.GetStatus() == CPhysics2D::STATUS::FALL && dJumpCount < 2
@@ -271,7 +308,7 @@ void CPlayer2D::Update(const double dElapsedTime)
 				relativeDir *= 0.33;
 				cPhysics2D.SetInitialVelocity(relativeDir);
 				// Play a sound for jump
-				cSoundController->PlaySoundByID(3);
+				//cSoundController->PlaySoundByID(3);
 			}
 		}
 	}
@@ -307,16 +344,17 @@ void CPlayer2D::Update(const double dElapsedTime)
 	}
 	if (cKeyboardController->IsKeyDown(GLFW_KEY_W))
 	{
-		cPhysics2D.SetGravityDirection(CPhysics2D::GRAVITY_DIRECTION::GRAVITY_RIGHT);
-		cPhysics2D.SetStatus(CPhysics2D::STATUS::FALL);
-		cMap2D->SetCurrentLevel(cPhysics2D.GetGravityDirection());
+		//cPhysics2D.SetGravityDirection(CPhysics2D::GRAVITY_DIRECTION::GRAVITY_RIGHT);
+		//cPhysics2D.SetStatus(CPhysics2D::STATUS::FALL);
+		//cMap2D->SetCurrentLevel(cPhysics2D.GetGravityDirection());
 
-		glm::vec2 relativeDir = cPhysics2D.GetRelativeDirVector(CPhysics2D::DIRECTION::UP);
-		relativeDir *= 0.1 ;
-		cPhysics2D.SetInitialVelocity(relativeDir);
+		//glm::vec2 relativeDir = cPhysics2D.GetRelativeDirVector(CPhysics2D::DIRECTION::UP);
+		//relativeDir *= 0.1 ;
+		//cPhysics2D.SetInitialVelocity(relativeDir);
 	}
 	if (cKeyboardController->IsKeyDown(GLFW_KEY_W))
 	{
+		
 	}
 	else if (cKeyboardController->IsKeyDown(GLFW_KEY_S))
 	{
@@ -588,6 +626,11 @@ void CPlayer2D::Move(CPhysics2D::DIRECTION eDirection, const double dElapsedTime
 
 	}
 
+	if (i32vec2Index.x != i32vec2OldIndex.x || i32vec2Index.y != i32vec2OldIndex.y && cPhysics2D.GetStatus() == CPhysics2D::STATUS::IDLE)
+	{
+		cSoundController->GetInstance()->PlaySoundByID(SOUND_TYPE::WALKING_GRASS);
+	}
+
 }
 
 
@@ -794,6 +837,8 @@ bool CPlayer2D::IsMidAir(void)
 // Update Jump or Fall
 void CPlayer2D::UpdateJumpFall(const double dElapsedTime)
 {
+	CPhysics2D::STATUS oldStatus = cPhysics2D.GetStatus();
+	float fallenMag = 0.0;
 	if (cPhysics2D.GetStatus() == CPhysics2D::STATUS::JUMP)
 	{
 		// Update the elapsed time to the physics engine
@@ -820,7 +865,7 @@ void CPlayer2D::UpdateJumpFall(const double dElapsedTime)
 			}
 
 			iDisplacement *= cPhysics2D.GetRelativeDirVector(CPhysics2D::DIRECTION::UP).y;
-
+			fallenMag = iDisplacement;
 			// Update the indices
 			i32vec2Index.y += iDisplacement;
 			i32vec2NumMicroSteps.y = 0;
@@ -883,7 +928,7 @@ void CPlayer2D::UpdateJumpFall(const double dElapsedTime)
 			// Update the indices
 			i32vec2Index.x += iDisplacement;
 			i32vec2NumMicroSteps.x = 0;
-
+			fallenMag = iDisplacement;
 			// Constraint the plaxer's position within the screen boundarx
 			Constraint(CPhysics2D::DIRECTION::UP);
 
@@ -961,7 +1006,7 @@ void CPlayer2D::UpdateJumpFall(const double dElapsedTime)
 			i32vec2NumMicroSteps.y = 0;
 
 			iDisplacement *= cPhysics2D.GetRelativeDirVector(CPhysics2D::DIRECTION::UP).y;
-			
+			fallenMag = iDisplacement;
 			// Constraint the player's position within the screen boundary
 			Constraint(CPhysics2D::DIRECTION::DOWN);
 			
@@ -1030,7 +1075,7 @@ void CPlayer2D::UpdateJumpFall(const double dElapsedTime)
 			i32vec2NumMicroSteps.x = 0;
 
 			iDisplacement *= cPhysics2D.GetRelativeDirVector(CPhysics2D::DIRECTION::UP).x;
-
+			fallenMag = iDisplacement;
 			// Constraint the plaxer's position within the screen boundarx
 			Constraint(CPhysics2D::DIRECTION::DOWN);
 
@@ -1088,8 +1133,10 @@ void CPlayer2D::UpdateJumpFall(const double dElapsedTime)
 		{
 			cPhysics2D.SetStatus(CPhysics2D::STATUS::IDLE);
 		}
-
-		
+		if(oldStatus == CPhysics2D::STATUS::FALL 
+			&& cPhysics2D.GetStatus() == CPhysics2D::STATUS::IDLE
+			&& abs(fallenMag) > 0)
+			cSoundController->PlaySoundByID(SOUND_TYPE::LANDED_GRASS);
 	
 	}
 }
@@ -1105,11 +1152,12 @@ void CPlayer2D::InteractWithMap(void)
 		cMap2D->SetMapInfo(i32vec2Index.y, i32vec2Index.x, 0);
 		cInventoryItem = cInventoryManager->GetItem("Bomb");
 		cInventoryItem->Add(1);
-		cSoundController->PlaySoundByID(1);
+		cSoundController->PlaySoundByID(SOUND_TYPE::ITEM_PICKUP);
 		break;
 	case CMap2D::TILE_ID::POWERUP_DOUBLEJUMP:
 		cMap2D->SetMapInfo(i32vec2Index.y, i32vec2Index.x, 0);
 		cInventoryItem = cInventoryManager->GetItem("DoubleJump");
+		cSoundController->PlaySoundByID(SOUND_TYPE::ITEM_PICKUP);
 		cInventoryItem->Add(100);
 		break;
 	case CMap2D::TILE_ID::ACID_DOWN:

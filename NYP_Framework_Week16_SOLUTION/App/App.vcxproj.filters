@@ -80,6 +80,9 @@
     <ClCompile Include="Source\Scene2D\EntityManager.cpp">
       <Filter>Scene2D</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Scene2D\ItemSpawner.cpp">
+      <Filter>Scene2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -142,5 +145,15 @@
     <ClInclude Include="Source\Scene2D\EntityManager.h">
       <Filter>Scene2D</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Scene2D\ItemSpawner.h">
+      <Filter>Scene2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SoundController\SoundType.h">
+      <Filter>SoundController</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
 </Project>

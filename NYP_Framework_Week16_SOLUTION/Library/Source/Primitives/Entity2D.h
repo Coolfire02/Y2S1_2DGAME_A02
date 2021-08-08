@@ -51,6 +51,9 @@ public:
 	// PostRender
 	virtual void PostRender(void);
 
+	// Collision Handler
+	virtual void CollidedWith(CEntity2D*);
+
 	// The i32vec2 which stores the indices of an Entity2D in the Map2D
 	glm::i32vec2 i32vec2Index;
 
@@ -60,6 +63,10 @@ public:
 
 	// The vec2 variable which stores the UV coordinates to render the Entity2D
 	glm::vec2 vec2UVCoordinate;
+
+	bool dead;
+
+	std::string name;
 
 protected:
 	// Name of Shader Program instance

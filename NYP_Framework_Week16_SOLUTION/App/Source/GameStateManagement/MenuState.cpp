@@ -136,16 +136,25 @@ bool CMenuState::Update(const double dElapsedTime)
 			// Reset the CKeyboardController
 			CKeyboardController::GetInstance()->Reset();
 
+			//Play warp sound
+			CSoundController::GetInstance()->PlaySoundByID(SOUND_TYPE::WARP);
+
 			// Load the menu state
 			cout << "Loading PlayGameState" << endl;
 			CGameStateManager::GetInstance()->SetActiveGameState("PlayGameState");
 		}
+
+		//if (ImGui::IsItemHovered())
+
 		// Add codes for Exit button here
 		if (ImGui::ImageButton((ImTextureID)exitButtonData.textureID,
 			ImVec2(buttonWidth, buttonHeight), ImVec2(0.0, 0.0), ImVec2(1.0, 1.0)))
 		{
 			// Reset the CKeyboardController
 			CKeyboardController::GetInstance()->Reset();
+
+			//Play warp sound
+			CSoundController::GetInstance()->PlaySoundByID(SOUND_TYPE::WARP);
 
 			// Load the menu state
 			cout << "Quitting the game from MenuState" << endl;

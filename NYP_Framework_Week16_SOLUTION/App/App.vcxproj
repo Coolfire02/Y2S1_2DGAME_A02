@@ -25,6 +25,7 @@
     <ClCompile Include="Source\Scene2D\GUI_Scene2D.cpp" />
     <ClCompile Include="Source\Scene2D\InventoryItem.cpp" />
     <ClCompile Include="Source\Scene2D\InventoryManager.cpp" />
+    <ClCompile Include="Source\Scene2D\ItemSpawner.cpp" />
     <ClCompile Include="Source\Scene2D\Map2D.cpp" />
     <ClCompile Include="Source\Scene2D\Physics2D.cpp" />
     <ClCompile Include="Source\Scene2D\Player2D.cpp" />
@@ -33,6 +34,7 @@
     <ClCompile Include="Source\SoundController\SoundInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\SoundController\SoundType.h" />
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\GameStateManagement\GameStateBase.h" />
     <ClInclude Include="Source\GameStateManagement\GameStateManager.h" />
@@ -47,12 +49,17 @@
     <ClInclude Include="Source\Scene2D\GUI_Scene2D.h" />
     <ClInclude Include="Source\Scene2D\InventoryItem.h" />
     <ClInclude Include="Source\Scene2D\InventoryManager.h" />
+    <ClInclude Include="Source\Scene2D\ItemSpawner.h" />
     <ClInclude Include="Source\Scene2D\Map2D.h" />
     <ClInclude Include="Source\Scene2D\Physics2D.h" />
     <ClInclude Include="Source\Scene2D\Player2D.h" />
     <ClInclude Include="Source\Scene2D\Scene2D.h" />
     <ClInclude Include="Source\SoundController\SoundController.h" />
     <ClInclude Include="Source\SoundController\SoundInfo.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9B172635-4E2B-46F1-A403-08F4194D00F5}</ProjectGuid>

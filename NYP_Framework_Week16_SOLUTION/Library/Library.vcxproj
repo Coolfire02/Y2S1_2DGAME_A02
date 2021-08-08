@@ -66,6 +66,7 @@
     <ClInclude Include="Source\System\filesystem.h" />
     <ClInclude Include="Source\System\ImageLoader.h" />
     <ClInclude Include="Source\System\LoadOBJ.h" />
+    <ClInclude Include="Source\System\MyMath.h" />
     <ClInclude Include="Source\System\rapidcsv.h" />
     <ClInclude Include="Source\TimeControl\FPSCounter.h" />
     <ClInclude Include="Source\TimeControl\StopWatch.h" />

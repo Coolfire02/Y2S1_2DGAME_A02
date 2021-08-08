@@ -39,6 +39,8 @@ using namespace std;
 // Include CPlayGameState
 #include "GameStateManagement/PlayGameState.h"
 
+
+
 /**
  @brief Define an error callback
  @param error The error code
@@ -269,11 +271,13 @@ void Application::Run(void)
 		if (dElapsedTime > 0.0166666666666667)
 			dElapsedTime = 0.0166666666666667;
 
+
 		// Call the active Game State's Update method
 		if (CGameStateManager::GetInstance()->Update(dElapsedTime) == false)
 		{
 			break;
 		}
+		CSoundController::GetInstance()->FadeUpdater(dElapsedTime);
 
 		// Call the active Game State's Render method
 		CGameStateManager::GetInstance()->Render();
