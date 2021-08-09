@@ -151,7 +151,6 @@ void CSoundController::FadeUpdater(double dt)
 				activeSound[i]->setVolume(0.f);
 			}
 			this->VolumeIncrease(i, fadeIn[i]->magnitudePerSecond * dt);
-			cout << "Fadein vol: " << activeSound[i]->getVolume() << endl;
 			if (activeSound[i]->getVolume() >= 1.0f)
 			{
 				delete fadeIn[i];

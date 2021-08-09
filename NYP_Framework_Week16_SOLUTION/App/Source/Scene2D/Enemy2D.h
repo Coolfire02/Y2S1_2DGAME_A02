@@ -148,7 +148,8 @@ protected:
 	// The i32vec2 which stores the indices of the destination for enemy2D in the Map2D
 	glm::i32vec2 i32vec2Destination;
 	// The i32vec2 which stores the direction for enemy2D movement in the Map2D
-	glm::i32vec2 i32vec2Direction;
+	//glm::i32vec2 i32vec2Direction; Cannot use since need to account for RelativeDir based off gravity
+	CPhysics2D::DIRECTION relativeDirections[2]; //Directions to move in 2 directions at once
 
 	// Settings
 	CSettings* cSettings;
@@ -181,10 +182,10 @@ protected:
 	bool LoadTexture(const char* filename, GLuint& iTextureID);
 
 	// Constraint the enemy2D's position within a boundary
-	void Constraint(DIRECTION eDirection = LEFT);
+	void Constraint(CPhysics2D::DIRECTION eDirection = CPhysics2D::DIRECTION::LEFT);
 
 	// Check if a position is possible to move into
-	bool CheckPosition(DIRECTION eDirection);
+	bool CheckPosition(CPhysics2D::DIRECTION eDirection);
 
 	// Check if the enemy2D is in mid-air
 	bool IsMidAir(void);
@@ -209,5 +210,11 @@ protected:
 
 	// Update position
 	void UpdatePosition(void);
+
+	// Check if  is at Top Row based on Gravity Dir
+	bool IsOnTopRow();
+
+	// Check if  is on Bottom Row based on Gravity Dir
+	bool IsOnBottomRow();
 };
 

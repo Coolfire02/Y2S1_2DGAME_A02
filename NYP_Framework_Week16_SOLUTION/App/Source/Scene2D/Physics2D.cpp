@@ -8,6 +8,10 @@
 #include <iostream>
 using namespace std;
 
+glm::vec2 CPhysics2D::v2Gravity = glm::vec2(0.0f, -1.1f);
+CPhysics2D::GRAVITY_DIRECTION CPhysics2D::sCurrentGravityDirection = GRAVITY_DIRECTION::GRAVITY_DOWN;
+float CPhysics2D::GRAVITY_MAGNITUDE = 1.1f;
+
 /**
  @brief Constructor This constructor has protected access modifier as this class will be a Singleton
  */
@@ -19,7 +23,6 @@ CPhysics2D::CPhysics2D(void)
 	, v2PrevDisplacement(glm::vec2(0.0f))
 	, fTime(0.0f)
 	, sCurrentStatus(STATUS::IDLE)
-	, sCurrentGravityDirection(GRAVITY_DIRECTION::GRAVITY_DOWN)
 {
 }
 
@@ -95,7 +98,7 @@ void CPhysics2D::SetStatus(const STATUS sStatus)
 	}
 }
 
-glm::vec2 CPhysics2D::GetGravityDirVector(void) const
+glm::vec2 CPhysics2D::GetGravityDirVector(void)
 {
 	glm::vec2 vec = glm::vec2(0, -1.f);
 	switch (sCurrentGravityDirection)
@@ -115,14 +118,14 @@ glm::vec2 CPhysics2D::GetGravityDirVector(void) const
 	return vec;
 }
 
-glm::vec2 CPhysics2D::GetGravityVector(void) const
+glm::vec2 CPhysics2D::GetGravityVector(void)
 {
 	glm::vec2 vec = GetGravityDirVector();
 	vec *= GRAVITY_MAGNITUDE;
 	return vec;
 }
 
-CPhysics2D::GRAVITY_DIRECTION CPhysics2D::GetGravityDirection() const
+CPhysics2D::GRAVITY_DIRECTION CPhysics2D::GetGravityDirection()
 {
 	return sCurrentGravityDirection;
 }

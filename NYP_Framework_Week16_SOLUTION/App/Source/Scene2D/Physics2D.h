@@ -11,7 +11,7 @@
 
 class CPhysics2D
 {
-	float GRAVITY_MAGNITUDE = 1.1;
+	static float GRAVITY_MAGNITUDE;
 public:
 	enum STATUS
 	{
@@ -63,12 +63,12 @@ public:
 	float GetTime(void) const;							// Get Time
 	STATUS GetStatus(void) const;						// Get Status
 	glm::vec2 GetDeltaDisplacement(void) const;			// Get Delta Displacement
-	GRAVITY_DIRECTION GetGravityDirection(void) const;	// Get Gravity Direction
+	static GRAVITY_DIRECTION GetGravityDirection(void);	// Get Gravity Direction
 	void setGravityMagnitude(float mag);
 	bool ReachedPeakOfJump(void) const;					// Checks if Peak of Jump has been found relative to Gravity Direction
 
-	glm::vec2 GetGravityDirVector(void) const;			// Get Gravity Direction's Vector
-	glm::vec2 GetGravityVector(void) const;				// Get Gravity Vector after Multiplying Dir Vec * Gravity Magnitude
+	static glm::vec2 GetGravityDirVector(void);			// Get Gravity Direction's Vector
+	static glm::vec2 GetGravityVector(void);				// Get Gravity Vector after Multiplying Dir Vec * Gravity Magnitude
 
 	glm::vec2 GetRelativeDirVector(DIRECTION);			// Get Relative Direction Vector based on Gravity Direction
 
@@ -94,8 +94,8 @@ protected:
 	glm::vec2 v2PrevDisplacement;	// Previous Displacement
 	float fTime;					// Time
 
-	const glm::vec2 v2Gravity = glm::vec2( 0.0f, -1.1f);		// Gravity constant
-	GRAVITY_DIRECTION sCurrentGravityDirection;
+	static glm::vec2 v2Gravity;		// Gravity constant
+	static GRAVITY_DIRECTION sCurrentGravityDirection;
 
 	STATUS sCurrentStatus;
 };
