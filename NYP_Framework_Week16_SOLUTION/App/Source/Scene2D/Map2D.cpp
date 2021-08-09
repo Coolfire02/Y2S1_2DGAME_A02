@@ -729,6 +729,8 @@ bool CMap2D::isValid(const glm::i32vec2& pos) const
  */
 bool CMap2D::isBlocked(const unsigned int uiRow, const unsigned int uiCol, const bool bInvert) const
 {
+	if (uiRow > cSettings->NUM_TILES_YAXIS || uiCol > cSettings->NUM_TILES_XAXIS)
+		return false;
 	if (bInvert == true)
 	{
 		if ((arrMapInfo[uiCurLevel][cSettings->NUM_TILES_YAXIS - uiRow - 1][uiCol].value >= 100) &&

@@ -8,7 +8,7 @@
 #include <iostream>
 using namespace std;
 
-glm::vec2 CPhysics2D::v2Gravity = glm::vec2(0.0f, -1.1f);
+glm::vec2 CPhysics2D::v2Gravity = glm::vec2(0.0f, -0.8f);
 CPhysics2D::GRAVITY_DIRECTION CPhysics2D::sCurrentGravityDirection = GRAVITY_DIRECTION::GRAVITY_DOWN;
 float CPhysics2D::GRAVITY_MAGNITUDE = 1.1f;
 

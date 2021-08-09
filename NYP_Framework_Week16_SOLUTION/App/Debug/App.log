@@ -1,43 +1,42 @@
 ﻿  Enemy2D.cpp
 C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\SoundController\SoundController.h(111,81): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\SoundController\SoundController.h(113,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(564,22): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(584,22): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(636,70): warning C4244: 'argument': conversion from 'T' to 'const unsigned int', possible loss of data
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(596,22): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(616,22): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(668,70): warning C4244: 'argument': conversion from 'T' to 'const unsigned int', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(636,38): warning C4244: 'argument': conversion from 'T' to 'const unsigned int', possible loss of data
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(668,38): warning C4244: 'argument': conversion from 'T' to 'const unsigned int', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(652,22): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(660,22): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(720,81): warning C4244: '*=': conversion from 'T' to 'int', possible loss of data
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(684,22): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(692,22): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(752,81): warning C4244: '*=': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(721,16): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(779,81): warning C4244: '*=': conversion from 'T' to 'int', possible loss of data
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(753,16): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(811,81): warning C4244: '*=': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(784,16): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(861,81): warning C4244: '*=': conversion from 'T' to 'int', possible loss of data
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(816,16): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(893,81): warning C4244: '*=': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(862,16): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(930,81): warning C4244: '*=': conversion from 'T' to 'int', possible loss of data
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(894,16): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(962,81): warning C4244: '*=': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(931,16): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\App\Source\Scene2D\Enemy2D.cpp(963,16): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
   App.vcxproj -> C:\Users\tanyo\Y2S1_2DGAME_A02\NYP_Framework_Week16_SOLUTION\Debug\App.exe

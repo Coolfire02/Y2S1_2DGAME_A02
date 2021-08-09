@@ -34,6 +34,9 @@ class CMap2D;
 // Include AnimatedSprites
 #include "Primitives/SpriteAnimation.h"
 
+// Entity Manager
+#include "EntityManager.h"
+
 // Include InventoryManager
 #include "InventoryManager.h"
 
@@ -109,8 +112,11 @@ protected:
 	enum FSM
 	{
 		IDLE = 0,
-		PATROL = 1,
-		ATTACK = 2,
+		ATTACK,
+
+		BOMB_SEARCH,
+		BOMB_ATTACK,
+		RUN,
 		NUM_FSM
 	};
 
@@ -125,6 +131,8 @@ protected:
 	CInventoryItem* cInventoryItem;
 
 	glm::i32vec2 i32vec2OldIndex;
+
+	CEntityManager2D* entityManager;
 
 	//CS: The quadMesh for drawing the tiles
 	CMesh* quadMesh;
@@ -168,6 +176,8 @@ protected:
 
 	// Handler to the CSoundController
 	CSoundController* cSoundController;
+
+
 
 	// Current FSM
 	FSM sCurrentFSM;

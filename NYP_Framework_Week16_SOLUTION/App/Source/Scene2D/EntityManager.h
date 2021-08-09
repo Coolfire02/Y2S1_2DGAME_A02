@@ -59,6 +59,8 @@ public:
 
 	void AddEntity(CEntity2D*);
 
+	std::vector<CEntity2D*> GetEntities();
+
 	void Exit(void);
 protected:
 

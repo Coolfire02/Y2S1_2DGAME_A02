@@ -19,6 +19,8 @@ using namespace std;
 // Include ImageLoader
 #include "System\ImageLoader.h"
 
+#include "System/MyMath.h"
+
 
 // Include the Map2D as we will use it to check the player's movements and actions
 #include "Map2D.h"
@@ -188,39 +190,72 @@ void CEnemy2D::Update(const double dElapsedTime)
 
 	switch (sCurrentFSM)
 	{
-	case IDLE:
-		//if (iFSMCounter > iMaxFSMCounter)
-		//{
-		//	sCurrentFSM = PATROL;
-		//	iFSMCounter = 0;
-		//	cout << "Switching to Patrol State" << endl;
-		//}
-		//iFSMCounter++;
-		//break;
-	case PATROL:
-		//if (iFSMCounter > iMaxFSMCounter)
-		//{
-		//	sCurrentFSM = IDLE;
-		//	iFSMCounter = 0;
-		//	cout << "Switching to Idle State" << endl;
-		//}
-		//else if (cPhysics2D.CalculateDistance(i32vec2Index, cPlayer2D->i32vec2Index) < 5.0f)
-		//{
-		//	sCurrentFSM = ATTACK;
-		//	iFSMCounter = 0;
-		//}
-		//else
-		//{
-		//	// Patrol around
-		//	// Update the Enemy2D's position for patrol
-		//	UpdateDirection();
-		//	UpdatePosition();
-		//}
-		//iFSMCounter++;
-		//break;
-	case ATTACK:
-		if (cPhysics2D.CalculateDistance(i32vec2Index, cPlayer2D->i32vec2Index) < 55.0f)
+	case IDLE: 
+		if (iFSMCounter > 120)
 		{
+			sCurrentFSM = BOMB_SEARCH;
+			iFSMCounter = 0;
+			cout << "Switching to Bomb Search" << endl;
+		}
+		iFSMCounter++;
+		break;
+	case BOMB_SEARCH:
+	{
+		unsigned int x, y;
+		x = y = -1;
+
+		if (cMap2D->FindValue(CMap2D::TILE_ID::BOMB_SMALL, x, y))
+		{
+			glm::i32vec2 pos = glm::i32vec2(x, y);
+			auto path = cMap2D->PathFind(i32vec2Index,
+				pos,
+				heuristic::manhattan,
+				10);
+			//cout << "=== Printing out the path ===" << endl;
+
+			// Calculate new destination
+			bool bFirstPosition = true;
+			glm::i32vec2 i32vec2Direction = glm::i32vec2(0, 0);
+			for (const auto& coord : path)
+			{
+				//std::cout << coord.x << "," << coord.y << "\n";
+				if (bFirstPosition == true)
+				{
+					// Set a destination
+					i32vec2Destination = coord;
+					// Calculate the direction between enemy2D and this destination
+					i32vec2Direction = i32vec2Destination - i32vec2Index;
+					bFirstPosition = false;
+				}
+				else
+				{
+					if ((coord - i32vec2Destination) == i32vec2Direction)
+					{
+						// Set a destination
+						i32vec2Destination = coord;
+					}
+					else
+						break;
+				}
+			}
+
+
+			//system("pause");
+
+			// Attack
+			// Update direction to move towards for attack
+			UpdateDirection();
+
+			// Update the Enemy2D's position for attack
+			UpdatePosition();
+		}
+		break;
+
+	}
+	case ATTACK:
+		if (cPhysics2D.CalculateDistance(i32vec2Index, cPlayer2D->i32vec2Index) < 25.0f)
+		{
+			cout << "Attacker Mode" << endl;
 			// Calculate a path to the player
 			//cMap2D->PrintSelf();
 			//cout << "StartPos: " << i32vec2Index.x << ", " << i32vec2Index.y << endl;
@@ -258,10 +293,7 @@ void CEnemy2D::Update(const double dElapsedTime)
 				}
 			}
 
-			cout << "i32vec2Destination : " << i32vec2Destination.x 
-					<< ", " << i32vec2Destination.y << endl;
-			cout << "i32vec2Direction : " << i32vec2Direction.x 
-					<< ", " << i32vec2Direction.y << endl;
+
 			//system("pause");
 
 			// Attack
@@ -271,16 +303,15 @@ void CEnemy2D::Update(const double dElapsedTime)
 			// Update the Enemy2D's position for attack
 			UpdatePosition();
 		}
-		else
+
+		if (iFSMCounter > iMaxFSMCounter)
 		{
-			if (iFSMCounter > iMaxFSMCounter)
-			{
-				sCurrentFSM = PATROL;
-				iFSMCounter = 0;
-				cout << "ATTACK : Reset counter: " << iFSMCounter << endl;
-			}
-			iFSMCounter++;
+			sCurrentFSM = IDLE;
+			iFSMCounter = 0;
+			cout << "ATTACK : Reset counter: " << iFSMCounter << endl;
 		}
+		iFSMCounter++;
+		
 		break;
 	default:
 		break;
@@ -362,6 +393,7 @@ void CEnemy2D::Render(void)
 	transform = glm::translate(transform, glm::vec3(vec2UVCoordinate.x,
 		vec2UVCoordinate.y,
 		0.0f));
+	transform = glm::rotate(transform, atan2f(CPhysics2D::GetGravityDirVector().y, CPhysics2D::GetGravityDirVector().x) + Math::HALF_PI, glm::vec3(0, 0, 1));
 	// Update the shaders with the latest transform
 	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
 	glUniform4fv(colorLoc, 1, glm::value_ptr(currentColor));
@@ -999,6 +1031,12 @@ void CEnemy2D::UpdateJumpFall(const double dElapsedTime)
 bool CEnemy2D::InteractWithPlayer(void)
 {
 	glm::i32vec2 i32vec2PlayerPos = cPlayer2D->i32vec2Index;
+
+	if (iFSMCounter > 120)
+	{
+		sCurrentFSM = IDLE;
+		iFSMCounter = 0;
+	}
 	
 	// Check if the enemy2D is within 1.5 indices of the player2D
 	if (((i32vec2Index.x >= i32vec2PlayerPos.x - 0.5) && 
@@ -1007,7 +1045,11 @@ bool CEnemy2D::InteractWithPlayer(void)
 		((i32vec2Index.y >= i32vec2PlayerPos.y - 0.5) &&
 		(i32vec2Index.y <= i32vec2PlayerPos.y + 0.5)))
 	{
-		cout << "Gotcha!" << endl;
+		
+		cInventoryItem = cInventoryManager->GetItem("Health");
+		cInventoryItem->Remove(100);
+
+
 		// Since the player has been caught, then reset the FSM
 		sCurrentFSM = IDLE;
 		iFSMCounter = 0;
@@ -1022,7 +1064,21 @@ bool CEnemy2D::InteractWithPlayer(void)
 void CEnemy2D::UpdateDirection(void)
 {
 	// Set the destination to the player
-	i32vec2Destination = cPlayer2D->i32vec2Index;
+	switch (sCurrentFSM)
+	{
+	case ATTACK:
+		i32vec2Destination = cPlayer2D->i32vec2Index;
+		break;
+	case BOMB_SEARCH:
+		unsigned int x, y;
+		x = y = -1;
+
+		if (cMap2D->FindValue(CMap2D::TILE_ID::BOMB_SMALL, x, y))
+		{
+			i32vec2Destination = glm::i32vec2(x, y);
+		}
+		break;
+	}
 
 	// Calculate the direction between enemy2D and player2D
 	glm::i32vec2 i32vec2Direction;
@@ -1092,27 +1148,28 @@ void CEnemy2D::UpdatePosition(void)
 	// Store the old position
 	i32vec2OldIndex = i32vec2Index;
 
-	cout << "Update Pos ===" << endl;
+	//cout << "Update Pos ===" << endl;
 	for (int i = 0; i < 2; i++)
 	{
-		cout << relativeDirections[i] << endl;
+		//cout << relativeDirections[i] << endl;
+		//cout << "x " << cPhysics2D.GetRelativeDirVector(relativeDirections[i]).x << " \n y " << cPhysics2D.GetRelativeDirVector(relativeDirections[i]).y << endl;
 		if (relativeDirections[i] != CPhysics2D::DIRECTION::NUM_DIRECTIONS)
 		{
+			CPhysics2D::DIRECTION eDirection = relativeDirections[i];
+			glm::vec2 relativeDir = cPhysics2D.GetRelativeDirVector(eDirection);
 
-			if (relativeDirections[i] == CPhysics2D::DIRECTION::UP)
+			if (relativeDir == CPhysics2D::GetGravityDirVector().operator*=(-1))
 			{
-		/*		if (cPhysics2D.GetStatus() == CPhysics2D::STATUS::IDLE)
+				if (cPhysics2D.GetStatus() == CPhysics2D::STATUS::IDLE)
 				{
 					cPhysics2D.SetStatus(CPhysics2D::STATUS::JUMP);
 					glm::vec2 relativeDir = cPhysics2D.GetRelativeDirVector(CPhysics2D::DIRECTION::UP);
 					relativeDir *= 0.33;
 					cPhysics2D.SetInitialVelocity(relativeDir);
-				}*/
+				}
 			}
 			else
 			{
-				CPhysics2D::DIRECTION eDirection = relativeDirections[i];
-				glm::vec2 relativeDir = cPhysics2D.GetRelativeDirVector(eDirection);
 
 				if (relativeDir.x == -1) // "A" Key
 				{
@@ -1250,11 +1307,11 @@ void CEnemy2D::UpdatePosition(void)
 
 
 				}
-
+				i32vec2OldIndex = i32vec2Index;
 			}
 		}
 	}
-	cout << "=====\n" << endl;
+	//cout << "=====\n" << endl;
 
 
 }

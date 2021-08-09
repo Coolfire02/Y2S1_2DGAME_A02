@@ -214,7 +214,7 @@ void CSoundController::PlaySoundByID(const int ID)
 	}
 	else if (cSoundEngine->isCurrentlyPlaying(pSoundInfo->GetSound()))
 	{
-		cout << "Sound #" << ID << " is currently being played." << endl;
+		//cout << "Sound #" << ID << " is currently being played." << endl;
 		return;
 	}
 

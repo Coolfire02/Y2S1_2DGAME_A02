@@ -122,6 +122,11 @@ void CEntityManager2D::Update(const double dElapsedTime)
 	}
 }
 
+std::vector<CEntity2D*> CEntityManager2D::GetEntities()
+{
+	return entities;
+}
+
 void CEntityManager2D::AddEntity(CEntity2D* entity)
 {
 	for (auto& tE : entities) {
