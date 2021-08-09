@@ -70,7 +70,7 @@ public:
 	static glm::vec2 GetGravityDirVector(void);			// Get Gravity Direction's Vector
 	static glm::vec2 GetGravityVector(void);				// Get Gravity Vector after Multiplying Dir Vec * Gravity Magnitude
 
-	glm::vec2 GetRelativeDirVector(DIRECTION);			// Get Relative Direction Vector based on Gravity Direction
+	static glm::vec2 GetRelativeDirVector(DIRECTION);			// Get Relative Direction Vector based on Gravity Direction
 
 
 	// Update
@@ -80,7 +80,7 @@ public:
 	void AddElapsedTime(const float fElapseTime);
 
 	// Calculate the distance between two vec2 varables
-	float CalculateDistance(glm::vec2 source, glm::vec2 destination);
+	static float CalculateDistance(glm::vec2 source, glm::vec2 destination);
 
 	// PrintSelf
 	void PrintSelf(void);
